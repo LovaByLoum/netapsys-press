@@ -40,12 +40,23 @@ function jcpt_query($q){
 			if(in_array($matches[1],$jcpt_options['enable'])){
         $q = str_replace($wpdb->prefix.'posts',$wpdb->prefix.$matches[1].'s',$q);
         $q = str_replace('AND 0 = 1','',$q);
-        $regex = "/SELECT (.*?) FROM (.*?)  (INNER JOIN) (.*?) (ON) (.*?) WHERE (.*?) AND \((.*?)\) AND (.*?) GROUP BY (.*?) ORDER BY (.*?) (LIMIT) (.*?)$/";
-        preg_match($regex,$q,$orderby);
-        if((isset($_REQUEST['orderby'])  && !empty($_REQUEST['orderby'])) && (isset($orderby[11]) && !empty($orderby[11]))){
-          $meta_key = jcpt_get_column_by_metaname($matches[1],$_REQUEST['orderby']);
-            $q = preg_replace($regex,"SELECT $1 FROM $2 WHERE $7 AND ($8) GROUP BY $10 ORDER BY " . $meta_key . " " . ((isset($_REQUEST['order']) && !empty($_REQUEST['order'])) ? $_REQUEST['order'] : "ASC"). " $12 $13",$q);
+
+        //tri avec filtre taxonomique
+        $regex = "/SELECT(.*?)SQL_CALC_FOUND_ROWS(.*?)FROM(.*?)INNER JOIN(.*?)term_relationships(.*?)ON \((.*?)\) INNER JOIN(.*?)postmeta(.*?)ON \((.*?)\) WHERE(.*?)AND \({$wpdb->prefix}postmeta.meta_key =(.*?)\)(.*?)GROUP BY (.*?) ORDER BY (.*?) (LIMIT) (.*?)$/";
+        $b = preg_match($regex,$q,$orderby);
+        if($b && (isset($_REQUEST['orderby'])  && !empty($_REQUEST['orderby'])) && (isset($orderby[14]) && !empty($orderby[14]))){
+            $meta_key = jcpt_get_column_by_metaname($matches[1],$_REQUEST['orderby']);
+            $q = preg_replace($regex,"SELECT$1SQL_CALC_FOUND_ROWS$2FROM$3INNER JOIN$4term_relationships$5ON($6)WHERE$10GROUP BY $13 ORDER BY " . $meta_key . " " . ((isset($_REQUEST['order']) && !empty($_REQUEST['order'])) ? $_REQUEST['order'] : "ASC"). " $15 $16",$q);
         }
+
+        //tri avec filtre meta
+        $regex2 = "/SELECT(.*?)SQL_CALC_FOUND_ROWS(.*?)FROM(.*?)INNER JOIN(.*?)postmeta(.*?)ON \((.*?)\) WHERE(.*?)AND \({$wpdb->prefix}postmeta.meta_key =(.*?)\)(.*?)GROUP BY (.*?) ORDER BY (.*?) (LIMIT) (.*?)$/";
+        $b = preg_match($regex2,$q,$orderby);
+        if($b && (isset($_REQUEST['orderby'])  && !empty($_REQUEST['orderby'])) && (isset($orderby[11]) && !empty($orderby[11]))){
+            $meta_key = jcpt_get_column_by_metaname($matches[1],$_REQUEST['orderby']);
+            $q = preg_replace($regex2,"SELECT$1SQL_CALC_FOUND_ROWS$2FROM$3 WHERE$7 GROUP BY $10 ORDER BY " . $meta_key . " " . ((isset($_REQUEST['order']) && !empty($_REQUEST['order'])) ? $_REQUEST['order'] : "ASC"). " $12 $13",$q);
+        }
+
       }
 	//admin list request
 	}elseif(
