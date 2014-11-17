@@ -44,7 +44,7 @@ function jcpt_query($q){
         preg_match($regex,$q,$orderby);
         if((isset($_REQUEST['orderby'])  && !empty($_REQUEST['orderby'])) && (isset($orderby[11]) && !empty($orderby[11]))){
           $meta_key = jcpt_get_column_by_metaname($matches[1],$_REQUEST['orderby']);
-          $q = preg_replace($regex,"SELECT $1 FROM $2 WHERE ($8) GROUP BY $10 ORDER BY " . $meta_key . " " . ((isset($_REQUEST['order']) && !empty($_REQUEST['order'])) ? $_REQUEST['order'] : "ASC"). " $12 $13",$q);
+            $q = preg_replace($regex,"SELECT $1 FROM $2 WHERE $7 AND ($8) GROUP BY $10 ORDER BY " . $meta_key . " " . ((isset($_REQUEST['order']) && !empty($_REQUEST['order'])) ? $_REQUEST['order'] : "ASC"). " $12 $13",$q);
         }
       }
 	//admin list request
