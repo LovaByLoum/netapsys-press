@@ -96,6 +96,9 @@ class WP_Infinite_Loading{
 	private $_infinite_button_hide_tpl = '<p id="no-data">No more data</p>';
 	//required for displaying infinite load button on first load, if items less than limit
 	private $_display_infinite_load_button = true;
+
+    //message not found element
+    public $messageNotFound = '<p id="wpil-no-results">Aucun résultat</p>';
 	
 	public function __construct($id){
 		$this->id = $id;
@@ -136,6 +139,7 @@ class WP_Infinite_Loading{
 	public function setItemNumberOnLoad($value){
 		$this->item_number_on_load = intval($value);
 	}
+
 
 	//set number item on load
 	public function setSuccessDelay($value){
@@ -258,6 +262,11 @@ class WP_Infinite_Loading{
 	public function addFilter($className){
 		array_push($this->filters_datas, $className);
 	}
+
+    //set message is not found
+    public function setMessageNotFound($value){
+        $this->messageNotFound = addslashes($value);
+    }
 	
 	//display an item
 	private function displayItem($id){
@@ -278,7 +287,7 @@ class WP_Infinite_Loading{
     }
 		return $html;
 	}
-	
+
 	//set a function callback to get items, function must return array of id
 	public function setGetItemsCallback($function){
 		$this->_getItemsCallback = $function;
@@ -344,7 +353,7 @@ class WP_Infinite_Loading{
 		extract($results);
 		$results = new stdClass();
 		$results->end = !$infinite_load_object->_display_infinite_load_button;
-		$results->count = 
+		$results->count = $count;
 		$results->items = $html;
 		echo json_encode($results);die();
 	}
@@ -373,6 +382,11 @@ class WP_Infinite_Loading{
 			.infinite-loading-mask.anim > tbody,
 			.infinite-loading-mask.anim > div{
 				display:none;
+			}
+			.infinite-loading-mask #wpil-no-results {
+			    display:block;
+                text-align: center;
+                height: 100px;
 			}
 		</style>";
 		echo $style;
@@ -480,7 +494,7 @@ class WP_Infinite_Loading{
 				$filter_classes.=$glue.'.'.$className;
 				$glue=',';
 			}
-			if(!empty($filter_classes)){	
+			if(!empty($filter_classes)){
 				$script.=
 				"//filtering button
 				jQuery(\"{$filter_classes}\").each(function($){
@@ -519,7 +533,12 @@ class WP_Infinite_Loading{
 						        },
 						        dataType:'json',
 						        success:function(data) {
-						        	jQuery(\"#wpil_item_container_{$this->id}\").html(data.items);
+						        	if (data.items){
+						        	    jQuery(\"#wpil_item_container_{$this->id}\").html(data.items);
+						        	}else{
+						        	    jQuery(\"#wpil_item_container_{$this->id}\").html(\"{$this->messageNotFound}\");
+						        	}
+
 						        	if(data.end){
 						        		{$this->clean_js_id}_change_button_status(false);
 						        		".apply_filters('no_data_event_'.$this->clean_id,'')."
