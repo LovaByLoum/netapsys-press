@@ -201,11 +201,11 @@ class WP_Infinite_Loading{
 	public function getItems($offset, $limit, $filters,$sorting){
 		//get items
 		if($this->_getItemsCallback){
-			add_filter('wpil_get_items',$this->_getItemsCallback,10,5);
+			add_filter('wpil_get_items_'.$this->clean_id,$this->_getItemsCallback,10,5);
 		}else{
-			add_filter('wpil_get_items',array($this,'defaultGetItemsCallback'),10,5);
+			add_filter('wpil_get_items_'.$this->clean_id,array($this,'defaultGetItemsCallback'),10,5);
 		}
-		$results = apply_filters('wpil_get_items',$offset, $limit, $filters,$sorting, $this->extra_args);
+		$results = apply_filters('wpil_get_items_'.$this->clean_id,$offset, $limit, $filters,$sorting, $this->extra_args);
 		
 		if(isset($results['posts']) && isset($results['count'])){
 			$item_ids = $results['posts'];
@@ -271,11 +271,11 @@ class WP_Infinite_Loading{
 	//display an item
 	private function displayItem($id){
 		if($this->_renderItemCallback){
-			add_filter('wpil_display_item',$this->_renderItemCallback);
+			add_filter('wpil_display_item_'.$this->clean_id ,$this->_renderItemCallback);
 		}else{
-			add_filter('wpil_display_item', array($this,'defaultRenderItemCallback'));
+			add_filter('wpil_display_item_'.$this->clean_id, array($this,'defaultRenderItemCallback'));
 		}
-		$html = apply_filters('wpil_display_item',$id);
+		$html = apply_filters('wpil_display_item_'.$this->clean_id,$id);
 		
 		$classes = ($this->item_classes)?' class="wpil_item '.$this->item_classes.'" ':' class="wpil_item" ';
 		if($this->list_view == 'list'){
