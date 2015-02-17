@@ -1,4 +1,10 @@
-<?php if(!empty($message)):?>
+<style>
+    .form-table{
+        border: 1px gray dotted;
+    }
+</style>
+<?php
+if(!empty($message)):?>
     <div id="message" class="updated  below-h2">
         <p><?php echo $message;?></p>
     </div>
@@ -25,7 +31,36 @@
                 <input name="scriptsuffix" type="text" value="<?php echo jp_secure_array_key('scriptsuffix',$jenpress_options, '.bat');?>" class="regular-text">
             </td>
         </tr>
+        </tbody>
+    </table>
+    <table class="form-table">
+        <tbody>
+        <tr><td colspan="2"><h2>Antcall enable</h2></td></tr>
+        <tr>
+            <td colspan="2">
+                <label for="antcall_pmd">Activer PMD Antcall</label> <input id="antcall_pmd" name="antcall_pmd" type="checkbox" value="1" <?php if (jp_secure_array_key('antcall_pmd',$jenpress_options, '0')):?>checked<?php endif;?>/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <label for="antcall_phpcpd">Activer CPD Antcall</label> <input id="antcall_phpcpd" name="antcall_phpcpd" type="checkbox" value="1" <?php if (jp_secure_array_key('antcall_phpcpd',$jenpress_options, '0')):?>checked<?php endif;?>/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <label for="antcall_phpcs">Activer Checkstyle Antcall</label> <input id="antcall_phpcs" name="antcall_phpcs" type="checkbox" value="1" <?php if (jp_secure_array_key('antcall_phpcs',$jenpress_options, '0')):?>checked<?php endif;?>/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <table class="form-table">
+        <tbody>
         <!--php files-->
+        <tr>
+            <td colspan="2">
+                <label for="phpfiles_section">Activer php files section</label> <input id="phpfiles_section" name="phpfiles_section" type="checkbox" value="1" <?php if (jp_secure_array_key('phpfiles_section',$jenpress_options, '0')):?>checked<?php endif;?>/>
+            </td>
+        </tr>
         <tr>
             <th scope="row">php-files Include files</th>
             <td>
@@ -40,7 +75,16 @@
                 <br/><em>Une valeur par ligne</em>
             </td>
         </tr>
+        </tbody>
+    </table>
+    <table class="form-table">
+        <tbody>
         <!--pdepend-->
+        <tr>
+            <td colspan="2">
+                <label for="pdepend_section">Activer pdepend section</label> <input id="pdepend_section" name="pdepend_section" type="checkbox" value="1" <?php if (jp_secure_array_key('pdepend_section',$jenpress_options, '0')):?>checked<?php endif;?>/>
+            </td>
+        </tr>
         <tr>
             <th scope="row">pdepend path to ignore</th>
             <td>
@@ -55,7 +99,16 @@
                 <br/><em>Une valeur par ligne.<br>Mettre dans ce champs les chemins à inclure selon le projet.</em>
             </td>
         </tr>
+        </tbody>
+    </table>
+    <table class="form-table">
+        <tbody>
         <!--pmd-->
+        <tr>
+            <td colspan="2">
+                <label for="pmd_section">Activer pmd section</label> <input id="pmd_section" name="pmd_section" type="checkbox" value="1" <?php if (jp_secure_array_key('pmd_section',$jenpress_options, '0')):?>checked<?php endif;?>/>
+            </td>
+        </tr>
         <tr>
             <th scope="row">pmd path to exclude</th>
             <td>
@@ -70,7 +123,16 @@
                 <br/><em>Une valeur par ligne.<br>Mettre dans ce champs les chemins à inclure selon le projet.</em>
             </td>
         </tr>
+        </tbody>
+    </table>
+    <table class="form-table">
+        <tbody>
         <!--php cpd-->
+        <tr>
+            <td colspan="2">
+                <label for="phpcpd_section">Activer php cpd section</label> <input id="phpcpd_section" name="phpcpd_section" type="checkbox" value="1" <?php if (jp_secure_array_key('phpcpd_section',$jenpress_options, '0')):?>checked<?php endif;?>/>
+            </td>
+        </tr>
         <tr>
             <th scope="row">php cpd path to exclude</th>
             <td>
@@ -85,7 +147,16 @@
                 <br/><em>Une valeur par ligne.<br>Mettre dans ce champs les chemins à inclure selon le projet.</em>
             </td>
         </tr>
+        </tbody>
+    </table>
+    <table class="form-table">
+        <tbody>
         <!--checkstyle-->
+        <tr>
+            <td colspan="2">
+                <label for="checkstyle_section">Activer checkstyle section</label> <input id="checkstyle_section" name="checkstyle_section" type="checkbox" value="1" <?php if (jp_secure_array_key('checkstyle_section',$jenpress_options, '0')):?>checked<?php endif;?>/>
+            </td>
+        </tr>
         <tr>
             <th scope="row">checkstyle path to exclude</th>
             <td>
@@ -100,7 +171,16 @@
                 <br/><em>Une valeur par ligne.<br>Mettre dans ce champs les chemins à inclure selon le projet.</em>
             </td>
         </tr>
+        </tbody>
+    </table>
+    <table class="form-table">
+        <tbody>
         <!--code browser-->
+        <tr>
+            <td colspan="2">
+                <label for="cb_section">Activer code browser section</label> <input id="cb_section" name="cb_section" type="checkbox" value="1" <?php if (jp_secure_array_key('cb_section',$jenpress_options, '0')):?>checked<?php endif;?>/>
+            </td>
+        </tr>
         <tr>
             <th scope="row">code browser path to exclude</th>
             <td>

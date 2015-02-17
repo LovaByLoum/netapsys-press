@@ -136,6 +136,100 @@ function jp_build_reconstruct(){
     }
     $buildsamplecontent = str_replace('${JP_CBPATH}',$cbpathincludesection,$buildsamplecontent);
 
+    //SECTION ENABLE :::::::::::::::
+    //php files
+    $tagstart = '${JP_PHPFILES_SECTION}';
+    $tagend = '${JP_PHPFILES_SECTION_END}';
+    if(isset($jenpress_options['phpfiles_section'])){
+        $buildsamplecontent = str_replace($tagstart,'',$buildsamplecontent);
+        $buildsamplecontent = str_replace($tagend,'',$buildsamplecontent);
+    }else{
+        $start = strpos($buildsamplecontent,$tagstart);
+        $end = strpos($buildsamplecontent,$tagend);
+        $buildsamplecontent = substr($buildsamplecontent,0,$start) . substr($buildsamplecontent,$end+strlen($tagend),strlen($buildsamplecontent));
+    }
+
+    //pdepend
+    $tagstart = '${JP_PDEPEND_SECTION}';
+    $tagend = '${JP_PDEPEND_SECTION_END}';
+    if(isset($jenpress_options['pdepend_section'])){
+        $buildsamplecontent = str_replace($tagstart,'',$buildsamplecontent);
+        $buildsamplecontent = str_replace($tagend,'',$buildsamplecontent);
+    }else{
+        $start = strpos($buildsamplecontent,$tagstart);
+        $end = strpos($buildsamplecontent,$tagend);
+        $buildsamplecontent = substr($buildsamplecontent,0,$start) . substr($buildsamplecontent,$end+strlen($tagend),strlen($buildsamplecontent));
+    }
+
+    //pmd
+    $tagstart = '${JP_PMD_SECTION}';
+    $tagend = '${JP_PMD_SECTION_END}';
+    if(isset($jenpress_options['pmd_section'])){
+        $buildsamplecontent = str_replace($tagstart,'',$buildsamplecontent);
+        $buildsamplecontent = str_replace($tagend,'',$buildsamplecontent);
+    }else{
+        $start = strpos($buildsamplecontent,$tagstart);
+        $end = strpos($buildsamplecontent,$tagend);
+        $buildsamplecontent = substr($buildsamplecontent,0,$start) . substr($buildsamplecontent,$end+strlen($tagend),strlen($buildsamplecontent));
+    }
+
+    //phpcpd
+    $tagstart = '${JP_PHPCPD_SECTION}';
+    $tagend = '${JP_PHPCPD_SECTION_END}';
+    if(isset($jenpress_options['phpcpd_section'])){
+        $buildsamplecontent = str_replace($tagstart,'',$buildsamplecontent);
+        $buildsamplecontent = str_replace($tagend,'',$buildsamplecontent);
+    }else{
+        $start = strpos($buildsamplecontent,$tagstart);
+        $end = strpos($buildsamplecontent,$tagend);
+        $buildsamplecontent = substr($buildsamplecontent,0,$start) . substr($buildsamplecontent,$end+strlen($tagend),strlen($buildsamplecontent));
+    }
+
+    //checkstyle
+    $tagstart = '${JP_CHECKSTYLE_SECTION}';
+    $tagend = '${JP_CHECKSTYLE_SECTION_END}';
+    if(isset($jenpress_options['checkstyle_section'])){
+        $buildsamplecontent = str_replace($tagstart,'',$buildsamplecontent);
+        $buildsamplecontent = str_replace($tagend,'',$buildsamplecontent);
+    }else{
+        $start = strpos($buildsamplecontent,$tagstart);
+        $end = strpos($buildsamplecontent,$tagend);
+        $buildsamplecontent = substr($buildsamplecontent,0,$start) . substr($buildsamplecontent,$end+strlen($tagend),strlen($buildsamplecontent));
+    }
+
+    //checkstyle
+    $tagstart = '${JP_CB_SECTION}';
+    $tagend = '${JP_CB_SECTION_END}';
+    if(isset($jenpress_options['cb_section'])){
+        $buildsamplecontent = str_replace($tagstart,'',$buildsamplecontent);
+        $buildsamplecontent = str_replace($tagend,'',$buildsamplecontent);
+    }else{
+        $start = strpos($buildsamplecontent,$tagstart);
+        $end = strpos($buildsamplecontent,$tagend);
+        $buildsamplecontent = substr($buildsamplecontent,0,$start) . substr($buildsamplecontent,$end+strlen($tagend),strlen($buildsamplecontent));
+    }
+
+    //ANTCALL ENABLE ::::::::::::::
+    //pmd
+    if(isset($jenpress_options['antcall_pmd'])){
+        //do nothing
+    }else{
+        $buildsamplecontent = str_replace('<antcall target="phpmd"/>', '',$buildsamplecontent);
+    }
+
+    //antcall_phpcpd
+    if(isset($jenpress_options['antcall_phpcpd'])){
+        //do nothing
+    }else{
+        $buildsamplecontent = str_replace('<antcall target="phpcpd"/>', '',$buildsamplecontent);
+    }
+
+    //antcall_phpcs
+    if(isset($jenpress_options['antcall_phpcs'])){
+        //do nothing
+    }else{
+        $buildsamplecontent = str_replace('<antcall target="phpcs"/>', '',$buildsamplecontent);
+    }
 
     //write
     $buildpath = ABSPATH . 'build.xml';

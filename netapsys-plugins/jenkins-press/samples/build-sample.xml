@@ -7,10 +7,12 @@
         <os family="windows" />
     </condition>
 
+    ${JP_PHPFILES_SECTION}
     <fileset id="php-files" dir="${basedir}">
         ${JP_INCLUDE_FILES}
         ${JP_EXCLUDE_FILES}
     </fileset>
+    ${JP_PHPFILES_SECTION_END}
 
     <target name="clean">
         <!-- Clean up -->
@@ -34,6 +36,7 @@
         </parallel>
     </target>
 
+    ${JP_PDEPEND_SECTION}
     <!-- Generate jdepend.xml and software metrics charts -->
     <target name="pdepend" description="Calculate software metrics using PHP_Depend">
         <exec executable="pdepend${script-suffix}">
@@ -44,7 +47,9 @@
             ${JP_PDEPENDPATH}
         </exec>
     </target>
+    ${JP_PDEPEND_SECTION_END}
 
+    ${JP_PMD_SECTION}
     <!-- Generate pmd.xml -->
     <target name="phpmd">
         <exec executable="phpmd${script-suffix}">
@@ -57,7 +62,9 @@
             <arg value="${JP_PMDIGNORE}" />
         </exec>
     </target>
+    ${JP_PMD_SECTION_END}
 
+    ${JP_PHPCPD_SECTION}
     <!-- Generate pmd-cpd.xml -->
     <target name="phpcpd">
         <exec executable="phpcpd${script-suffix}">
@@ -68,7 +75,9 @@
             ${JP_PHPCPDPATH}
         </exec>
     </target>
+    ${JP_PHPCPD_SECTION_END}
 
+    ${JP_CHECKSTYLE_SECTION}
     <!-- Generate checkstyle.xml -->
     <target name="phpcs">
         <exec executable="phpcs${script-suffix}" output="${basedir}/dev/build/logs/phpcs.error.log">
@@ -79,6 +88,7 @@
             ${JP_CHECKSTYLEPATH}
         </exec>
     </target>
+    ${JP_CHECKSTYLE_SECTION_END}
 
     <!-- Generate API documentation -->
     <target name="phpdoc">
@@ -87,6 +97,7 @@
         </exec>
     </target>
 
+    ${JP_CB_SECTION}
     <!-- Generate Code for CodeBrowser -->
     <target name="phpcb">        
         <exec executable="phpcb${script-suffix}">
@@ -100,6 +111,7 @@
             <arg path="${basedir}/dev/build/code-browser" />
         </exec>
     </target>
+    ${JP_CB_SECTION_END}
 
     <!-- For push -->
     <target name="build-lite" depends="clean,parallelTasks" />
