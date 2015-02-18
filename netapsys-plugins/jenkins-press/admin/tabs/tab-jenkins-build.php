@@ -12,6 +12,18 @@ if(!empty($message)):?>
 <form method="post" action="options-general.php?page=jenkins-press&tab=jenkins-build" style="background:url(<?php echo plugins_url('jenkins-press/images/jenkins.png'); ?>);">
 
     <table class="form-table">
+	<tbody>
+		<tr>
+			<th scope="row">Your jenkin's URL project on your CI environment </th>
+			<td>
+				<input name="urljk_project" type="text" value="<?php echo jp_secure_array_key('urljk_project',$jenpress_options, 'http://ci01.mg.netapsys.fr:8090/jenkins/');?>" class="regular-text">
+			</td>
+		</tr>
+
+	</tbody>	
+	</table>	
+	
+	<table class="form-table">
         <tbody>
         <tr>
             <th scope="row">Project name</th>

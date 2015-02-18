@@ -7,6 +7,12 @@ if($_POST['submit']){
     $message = 'Fichier <a target="__blank" href="' . site_url('build.xml').'">build.xml</a> regeneré.';
 }
 $jenpress_options = get_option('jenpress_options');
+
+$defaultUrljenkins = '#';
+if (isset($jenpress_options['urljk_project']) && $jenpress_options['urljk_project'] != '' ) {
+	$defaultUrljenkins = $jenpress_options['urljk_project'];
+}
+
 ?>
 <div class="wrap">
     <h2>Jenkins Press</h2>
@@ -14,7 +20,7 @@ $jenpress_options = get_option('jenpress_options');
     <h2 class="nav-tab-wrapper">
         <a href="options-general.php?page=jenkins-press&tab=jenkins-build" class="nav-tab <?php if($current_tab == 'jenkins-build'):?>nav-tab-active<?php endif;?>" id="jenkins-build-tab">Configuration du fichier build.xml</a>
         <!--a href="options-general.php?page=jenkins-press&tab=jenkins-board" class="nav-tab <?php if($current_tab == 'jenkins-board'):?>nav-tab-active<?php endif;?>" id="jenkins-board-tab">Tableau de bord Jenkins</a-->
-        <a href="http://ci01.mg.netapsys.fr:8090/jenkins/" class="nav-tab <?php if($current_tab == 'jenkins-board'):?>nav-tab-active<?php endif;?>" id="jenkins-board-tab">Tableau de bord Jenkins</a>
+        <a href="<?php echo $defaultUrljenkins; ?>" target="_blank" class="nav-tab <?php if($current_tab == 'jenkins-board'):?>nav-tab-active<?php endif;?>" id="jenkins-board-tab">Tableau de bord Jenkins</a>
     </h2>
     <div id="tab-content">
         <?php
