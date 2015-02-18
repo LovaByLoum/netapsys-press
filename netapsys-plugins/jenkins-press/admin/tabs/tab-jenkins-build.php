@@ -16,7 +16,10 @@ if(!empty($message)):?>
 		<tr>
 			<th scope="row">Your jenkin's URL project on your CI environment </th>
 			<td>
-				<input name="urljk_project" type="text" value="<?php echo jp_secure_array_key('urljk_project',$jenpress_options, 'http://ci01.mg.netapsys.fr:8090/jenkins/');?>" class="regular-text">
+				<input name="urljk_project" type="text" value="<?php echo jp_secure_array_key('urljk_project',$jenpress_options, 'http://ci01.mg.netapsys.fr:8090/jenkins/');?>" class="regular-text"><br/>
+
+				* For your information, before to fill this field and other actions in this page, you may create your own CI project's environnement and to configure it. Be aware to save the good URL of your project. The tab "Tableau de bord de Jenkins" will be activated after you initialize this input.	
+
 			</td>
 		</tr>
 
