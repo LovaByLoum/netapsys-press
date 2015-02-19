@@ -2,7 +2,7 @@
 /*
 Plugin Name: Jenkins Press
 Description: Gestion et mise en place de Jenkins dans uns site WordPress
-Author: Johary netapsys
+Author: Johary, Valentinà Netapsys
 */
 add_action('admin_menu', 'jp_init');
 function jp_init(){
