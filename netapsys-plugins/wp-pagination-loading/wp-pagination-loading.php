@@ -34,6 +34,14 @@ Domain Path: /lang
     $object->displayItems();
     //display the pagination loading button
     $object->displayPaginationLoadButton();
+
+    //hook class item
+    // $class = class name element
+    //$key = position element
+    //apply_filters('wppl_item_class_' . $this->clean_id,$class,$key);
+
+    //Filtre type select ajout data-filter="<nom-filtre>" et class
+    //Filtre input radio/checkbox ajout data-filter="<nom-filtre>" et class
 *
 *
 * see other functions :  setOnLoadSorting, setOnLoadFilter, removeMask
@@ -42,7 +50,7 @@ Domain Path: /lang
 */
 
 class WP_Pagination_Loading{
-	
+
 	// pagination load box id
 	public $id;
 	//cleanid for function concatenation
@@ -79,6 +87,7 @@ class WP_Pagination_Loading{
 	//required for displaying pagination load button on first load, if items less than limit
 	private $_display_pagination_load_button = true;
 	public $pagination_args = array();
+  public $class_wrapper_container;
 
 	public function __construct($id){
 		$this->id = $id;
@@ -164,6 +173,10 @@ class WP_Pagination_Loading{
 	public function setOnLoadFilter($filters){
 		$this->on_load_filter_value = $filters;
 	}
+
+  public function setClassWrapperContainer($class){
+    $this->class_wrapper_container = $class;
+  }
 	
 	//render data list with pagination loading box
 	public function displayItems(){
@@ -177,22 +190,23 @@ class WP_Pagination_Loading{
 		if($this->list_view == 'list'){
 			$html = '<ul id="wppl_item_container_'.$this->id.'" class="' . $this->container_classes .'">'.$html.'</ul>';
 		}elseif ($this->list_view == 'table'){
-			$html = '<tbody id="wppl_item_container_'.$this->id.'" class="' . $this->container_classes .'">'.$html.'</tbody>';
+      $extra = apply_filters('wppl_item_container_extra_' . $this->clean_id,'');
+			$html = '<table ' . $extra . ' id="wppl_item_container_'.$this->id.'" class="' . $this->container_classes .'">'.$html.'</table>';
 	    }else{
 	      $html = '<div id="wppl_item_container_'.$this->id.'" class="' . $this->container_classes .'">'.$html.'</div>';
 	    }
-		echo '<div class="pagination-loading-mask loading">' . $html . '</div>';
+		echo '<div class="pagination-loading-mask loading ' . $this->class_wrapper_container . '">' . $html . '</div>';
 	}
-	
+
 	//get items
 	public function getItems($offset, $limit, $filters ,$sorting){
 		//get items
 		if($this->_getItemsCallback){
-			add_filter('wppl_get_items',$this->_getItemsCallback,10,5);
+			add_filter('wppl_get_items_'.$this->clean_id,$this->_getItemsCallback,10,5);
 		}else{
-			add_filter('wppl_get_items',array($this,'defaultGetItemsCallback'),10,5);
+			add_filter('wppl_get_items_'.$this->clean_id,array($this,'defaultGetItemsCallback'),10,5);
 		}
-		$results = apply_filters('wppl_get_items',$offset, $limit, $filters,$sorting, $this->extra_args);
+		$results = apply_filters('wppl_get_items_'.$this->clean_id,$offset, $limit, $filters,$sorting, $this->extra_args);
     $item_ids = $results['posts'];
 		//calculate the first displaying status of the pagination load button
 		$count = $results['count'];
@@ -201,8 +215,9 @@ class WP_Pagination_Loading{
 
 		$html = '';
 		if(!empty($item_ids)){
-			foreach ($item_ids as $id) {
-				$html.= $this->displayItem(intval($id));	
+			foreach ($item_ids as $key => $id) {
+        $class = apply_filters('wppl_item_class_' . $this->clean_id,'item',$key);
+				$html.= $this->displayItem(intval($id),$class);
 			}
 		}
 		
@@ -218,13 +233,11 @@ class WP_Pagination_Loading{
 			'before' => '',
 			'after' => '',
 			'echo' => true,
-			
 			'style' => 1,
 			'always_show' => false,
 			'num_pages' => 2,
 			'num_larger_page_numbers' => 2,
 			'larger_page_numbers_multiple' => 5,
-			
 			'pages_text' => '', // use "%CURRENT_PAGE%", "%TOTAL_PAGES%" rewrite tag
 			'first_text' => '<<', // use "%TOTAL_PAGES%" rewrite tag
 			'prev_text' => '<',
@@ -234,17 +247,19 @@ class WP_Pagination_Loading{
 			'page_text' => '%PAGE_NUMBER%',
 			'next_text' => '>',
 			'last_text' => '>>', // use "%TOTAL_PAGES%" rewrite tag
-			
-			
+      'container_class' => 'pager_container',
+      'container' => 'div',
 		) );
-	
+
 		$posts_per_page = $this->item_per_page;
 		$paged = intval($this->item_offset/$this->item_per_page +1);
 		$total_pages = ceil($this->total_posts/$this->item_per_page);
-	
-		if ( 1 == $total_pages && isset($args['always_show']) && $args['always_show'])
+
+
+		if ( 1 == $total_pages && !$args['always_show'])
 			return;
-	
+
+
 		$pages_to_show = absint( $args['num_pages'] );
 		$larger_page_to_show = absint( $args['num_larger_page_numbers'] );
 		$larger_page_multiple = absint( $args['larger_page_numbers_multiple'] );
@@ -321,6 +336,7 @@ class WP_Pagination_Loading{
 				// Page numbers
 				$timeline = 'smaller';
 				if($start_page<=$end_page){
+          $out .= "<span>";
 					foreach ( range( $start_page, $end_page ) as $i ) {
 						if ( $i == $paged && !empty( $args['current_text'] ) ) {
 							$current_page_text = str_replace( '%PAGE_NUMBER%', number_format_i18n( $i ), $args['current_text'] );
@@ -331,6 +347,7 @@ class WP_Pagination_Loading{
 							$out .= $this->get_single( $i, "page $timeline", $args['page_text'] );
 						}
 					}
+          $out .= "</span>";
 				}
 				
 				// Large pages
@@ -366,9 +383,27 @@ class WP_Pagination_Loading{
           }
         $out .= '</div>';
 				break;
-			
+
+      //Custom
+      case 2:
+        $array_args = array(
+          'start_page' => $start_page,
+          'end_page' => $end_page,
+          'pages_to_show' => $pages_to_show,
+          'larger_page_multiple' => $larger_page_multiple,
+          'larger_page_to_show' => $larger_page_to_show,
+          'half_page_start' => $half_page_start,
+          'half_page_end' => $half_page_end,
+          'paged' => $paged,
+          'total_pages' => $total_pages
+        );
+
+        $out .= apply_filters( 'wppl_custom_out', $array_args );
+
+        break;
 		}
-		$out = $args['before'] . "<div id='wppl-pagination-button-box-" . $this->clean_id ."' class='pager nums'>\n$out\n</div>" . $args['after'];
+
+		$out = $args['before'] . "<" . $args['container'] . " id='wppl-pagination-button-box-" . $this->clean_id ."' class='pager nums " . $args['container_class'] ."'>\n$out\n</" . $args['container'] . ">" . $args['after'];
 
 		$out = apply_filters( 'wppl_pagenavi', $out );
 	
@@ -377,14 +412,17 @@ class WP_Pagination_Loading{
 	
 		echo $out;
 	}
-	public function get_single( $page, $class, $raw_text, $format = '%PAGE_NUMBER%', $spanclass = '' ,$current=false) {
+	public function get_single( $page, $class, $raw_text, $format = '%PAGE_NUMBER%', $spanclass = '' ,$current=false,$span = true) {
 		if ( empty( $raw_text ) )
 			return '';
 
 		$text = str_replace( $format, number_format_i18n( $page ), $raw_text );
     $wpplclass = '';
     if(!$current) $wpplclass = "pagination-button-". $this->clean_id ;
-		return "<span class='". $spanclass ."'><a href='javascript:;' data-page='" . $page . "' class='". $wpplclass ." " . $class . "'>$text</a></span>";
+    if($span)
+		  return "<span class='". $spanclass ."'><a href='javascript:;' data-page='" . $page . "' class='". $wpplclass ." " . $class . "'>$text</a></span>";
+    else
+      return "<a href='javascript:;' data-page='" . $page . "' class='". $wpplclass ." " . $class . "'>$text</a>";
 	}
 	
 	//add sorting configuration, the element must have data-order and data-orderby attributes
@@ -398,15 +436,15 @@ class WP_Pagination_Loading{
 	}
 	
 	//display an item
-	private function displayItem($id){
+	private function displayItem($id,$class=""){
 		if($this->_renderItemCallback){
-			add_filter('wppl_display_item',$this->_renderItemCallback);
+			add_filter('wppl_display_item_'.$this->clean_id,$this->_renderItemCallback,1,2);
 		}else{
-			add_filter('wppl_display_item', array($this,'defaultRenderItemCallback'));
+			add_filter('wppl_display_item_'.$this->clean_id, array($this,'defaultRenderItemCallback'));
 		}
-		$html = apply_filters('wppl_display_item',$id);
+		$html = apply_filters('wppl_display_item_'.$this->clean_id,$id,$class);
 		
-		$classes = ($this->item_classes)?' class="wppl_item '.$this->item_classes.'" ':' class="wppl_item" ';
+		$classes = ($this->item_classes)?' class="wppl_item '  .$this->item_classes . ' ' . $class . '" ':' class="wppl_item ' . $class . '" ';
 		if($this->list_view == 'list'){
 			$html = '<li '.$classes.'>'.$html.'</li>';
 		}elseif($this->list_view == 'table'){
@@ -482,7 +520,9 @@ class WP_Pagination_Loading{
 		$results = new stdClass();
 		$results->count = $count;
 		$results->items = $html;
-
+    if($results->count == 0){
+      $results->items = apply_filters('wppl_message_erreur_' . $pagination_load_object->clean_id,'<p>Aucun résultat ne correspond à ce(s) critère(s)<p>');
+    }
     $pagination_load_object->pagination_args['echo'] = false;
     $results->pager = $pagination_load_object->displayPaginationLoadButton();
 		echo json_encode($results);die();
@@ -500,11 +540,11 @@ class WP_Pagination_Loading{
 		$style =
 		"<style>
 			.pagination-loading-mask{
-				min-height:400px;
+				/*min-height:400px;*/
 				background:none;
 			}
 			.pagination-loading-mask.loading{
-				background:#F0F0F0 url(\"". plugins_url( "/loading.gif", __FILE__) . "\") no-repeat center center;
+				background: url(\"". plugins_url( "/loading.gif", __FILE__) . "\") no-repeat center center;
 			}
 			.pagination-loading-mask > ul,
 			.pagination-loading-mask > tbody,
@@ -583,10 +623,83 @@ class WP_Pagination_Loading{
 				$script.=
 				"//filtering button
 				jQuery(\"{$filter_classes}\").each(function($){
-					if(jQuery(this).get(0).tagName.toLowerCase() == 'option'){
-						//coming soon
-					}else if(jQuery(this).get(0).tagName.toLowerCase() == 'checkbox' || jQuery(this).get(0).tagName.toLowerCase() == 'radio'){	
-						//coming soon
+					if(jQuery(this).get(0).tagName.toLowerCase() == 'select'){
+						jQuery(this).change(function($){
+              if(WPPL_BUTTON_LOCKED==true) return false;
+              WPPL_BUTTON_LOCKED = true;
+
+              jQuery(\"{$filter_classes}\").each(function($){
+                if(jQuery(this).prop('tagName') == 'SELECT'){
+                  _filter = jQuery(this).data('filter');
+                  _filterby = jQuery(this).val();
+                }else{
+                  _filter = jQuery(this).data('filter');
+                  _name = jQuery(this).attr('name');
+                  var _val = [];
+                  jQuery('input[name='+_name+']:checked').each(function(){
+                      _val.push(jQuery(this).val());
+                  })
+                   _filterby = _val;
+                }
+                {$this->clean_js_id}_FILTERS[_filter] = _filterby;
+              });
+
+              {$this->clean_js_id}_onload();
+              ".apply_filters('ajax_loading_'.$this->clean_id,'')."
+              jQuery.ajax({
+                url: '". admin_url('admin-ajax.php')."',
+                data: {
+                  'action':'wppl_pagination_action',
+                  'object': {$this->clean_js_id}_OBJECT,
+                  'limit': {$this->clean_js_id}_LIMIT,
+                  'offset': 0,
+                  'order': {$this->clean_js_id}_ORDER,
+                  'orderby': {$this->clean_js_id}_ORDERBY,
+                  'filters': {$this->clean_js_id}_FILTERS
+                },
+                dataType:'json',
+                success:function(data) {
+                  jQuery(\"#wppl_item_container_{$this->id}\").html(data.items);
+                  WPPL_BUTTON_LOCKED = false;
+                  {$this->clean_js_id}_success(data);
+                  ".apply_filters('ajax_success_' . $this->clean_id, '')."
+                }
+              });
+            })
+					}else if(jQuery(this).get(0).tagName.toLowerCase() == 'input'){
+             jQuery(this).change(function($){
+                if(WPPL_BUTTON_LOCKED==true) return false;
+                WPPL_BUTTON_LOCKED = true;
+                _filter = jQuery(this).data('filter');
+                _name = jQuery(this).attr('name');
+                var _val = [];
+                jQuery('input[name='+_name+']:checked').each(function(){
+                    _val.push(jQuery(this).val());
+                })
+                _filterby = _val;
+                {$this->clean_js_id}_FILTERS[_filter] = _filterby;
+                {$this->clean_js_id}_onload();
+                ".apply_filters('ajax_loading_'.$this->clean_id,'')."
+                jQuery.ajax({
+                  url: '". admin_url('admin-ajax.php')."',
+                  data: {
+                    'action':'wppl_pagination_action',
+                    'object': {$this->clean_js_id}_OBJECT,
+                    'limit': {$this->clean_js_id}_LIMIT,
+                    'offset': 0,
+                    'order': {$this->clean_js_id}_ORDER,
+                    'orderby': {$this->clean_js_id}_ORDERBY,
+                    'filters': {$this->clean_js_id}_FILTERS
+                  },
+                  dataType:'json',
+                  success:function(data) {
+                    jQuery(\"#wppl_item_container_{$this->id}\").html(data.items);
+                    WPPL_BUTTON_LOCKED = false;
+                    {$this->clean_js_id}_success(data);
+                    ".apply_filters('ajax_success_' . $this->clean_id, '')."
+                  }
+                });
+              })
 					}else{
 						jQuery(this).click(function($){
 							if(WPPL_BUTTON_LOCKED==true) return false;
@@ -612,7 +725,7 @@ class WP_Pagination_Loading{
 						        	jQuery(\"#wppl_item_container_{$this->id}\").html(data.items);
 						        	WPPL_BUTTON_LOCKED = false;
 						        	{$this->clean_js_id}_success(data);
-						        	".apply_filters('ajax_success_'.$this->clean_id,'')."
+						        	".apply_filters('ajax_success_' . $this->clean_id, '')."
 						        }
 					      	});
 						})
