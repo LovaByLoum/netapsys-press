@@ -25,13 +25,13 @@ class Wordpress_Utils
 		add_action('login_head', array($this,'wpu_logo_head'));
 		add_filter('login_headerurl', array($this,'wpu_custom_login_headerurl'));
 		add_filter('login_headertitle', array($this,'wpu_custom_login_headertitle'));
-
+		/*
 		// supprimer les notifications du core
 		add_filter( 'pre_site_transient_update_core', create_function( '$a', "return null;" ) );
 		// supprimer les notifications de plugins
 		remove_action( 'load-update-core.php', 'wp_update_plugins' );
 		add_filter( 'pre_site_transient_update_plugins', create_function( '$a', "return null;" ) );
-
+		*/
 		//suprimmer des widget du dashboard
 		add_action('wp_dashboard_setup', array($this,'wpu_remove_dashboard_widgets' ));
 
