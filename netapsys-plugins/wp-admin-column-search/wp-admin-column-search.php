@@ -150,7 +150,7 @@ function acs_input_column(){
 	
 	$acs_options = get_option('acs_options');
     $inputform=array();
-    
+
     //create table field drop box
     if(isset($acs_options['postdata_field'][$pt])){
     	foreach ($acs_options['postdata_field'][$pt] as $key=>$val) {
@@ -163,6 +163,7 @@ function acs_input_column(){
 					<option value="">--Séléctionnez--</option>';
 
                 //compatibility jcpt
+                $table = $wpdb->posts;
                 if(function_exists('jcpt_whereis')){
                 	global $jcpt_options;
 					if(is_null($jcpt_options)){
@@ -186,7 +187,7 @@ function acs_input_column(){
                 }else{
                 	$final_options = $options;
                 }
-                
+
     			$final_options=array_filter($final_options);
     			asort($final_options);
     			foreach ($final_options as $fkey=>$val) {
@@ -219,7 +220,7 @@ function acs_input_column(){
     }
     //create meta dropbox
     if(isset($acs_options['meta_field'][$pt])){
-        $metanames = jcpt_get_metanames($pt);
+        //$metanames = jcpt_get_metanames($pt);
     	foreach ($acs_options['meta_field'][$pt] as $key=>$val) {
     		if(empty($val))continue;
     		if($val!='select') continue;
