@@ -2,52 +2,54 @@
 /**
  * Plugin Name: jPress Archive
  * Plugin URI:
- * Text Domain: jpress_archive
-  * Description: Mise en place de la fonctionnalité d'archivage par post_status pour tous les post type
- * Author: Johary Ranarimanana
- * Version: 0.0.1
+ * Text Domain: jpress-archive
+ * Description: Archive features for all your post types using post status.
+ * Author: Johary Ranarimanana (Netapsys)
+ * Version: 1.0.0
  */
 
+// register post status archive
+add_action( 'init', 'jpress_archive_post_status' );
 function jpress_archive_post_status(){
     register_post_status( 'archived', array(
-        'label'                     => __( 'Archivé', 'jpress_archive'),
+        'label'                     => __( 'Archived', 'jpress-archive'),
         'public'                    => false,
         'exclude_from_search'       => true,
         'show_in_admin_all_list'    => true,
         'show_in_admin_status_list' => true,
-        'label_count'               => _n_noop( 'Archivé <span class="count">(%s)</span>', 'Archivé <span class="count">(%s)</span>' ),
+        'label_count'               => _n_noop( 'Archived <span class="count">(%s)</span>', 'Archived <span class="count">(%s)</span>', 'jpress-archive' ),
     ) );
 }
-add_action( 'init', 'jpress_archive_post_status' );
 
-add_action('admin_head', 'jpress_archive_head');
-function jpress_archive_head(){
-     global $wp_post_types;
-     ?>
-        <script>
-            jQuery(document).ready(function(){
-                <?php
-                foreach ( $wp_post_types as $pt=>$data) :
-                    switch($pt){
-                        case 'post':?>
-                            jQuery('<li><a href="edit.php?post_type=<?php echo $pt;?>&amp;post_status=archived">Archives</a></li>').appendTo('#menu-posts ul.wp-submenu');
-                            <?php break;
-                        case 'page':?>
-                            jQuery('<li><a href="edit.php?post_type=<?php echo $pt;?>&amp;post_status=archived">Archives</a></li>').appendTo('#menu-pages ul.wp-submenu');
-                            <?php break;
-                        default: ?>
-                            jQuery('<li><a href="edit.php?post_type=<?php echo $pt;?>&amp;post_status=archived">Archives</a></li>').appendTo('#menu-posts-<?php echo $pt;?> ul.wp-submenu');
-                            <?php break;
-                    }
-                endforeach;?>
-            })
-        </script>
-    <?php
+//plugin register traduction
+add_action('plugins_loaded', 'jpress_plugins_loaded');
+function jpress_plugins_loaded(){
+    load_plugin_textdomain('jpress-archive', false, dirname(plugin_basename(__FILE__)).'/languages/');
 }
 
+
+//create sublink archive for all post types menus
+add_action('admin_menu', 'jpress_admin_menu');
+function jpress_admin_menu(){
+    global $submenu, $wp_post_types;
+
+    foreach ( $wp_post_types as $pt=>$data) {
+        switch($pt){
+            case 'post':
+                $submenu['edit.php'][] = array('Archives', 'edit_posts', 'edit.php?post_type=post&post_status=archived');
+                break;
+            default:
+                $submenu['edit.php?post_type='.$pt][] = array('Archives', 'edit_posts', 'edit.php?post_type='.$pt.'&post_status=archived');
+                break;
+        }
+    }
+}
+
+//add row action archive and restore for all post types
+add_filter( 'page_row_actions','jpress_archive_add_archive_link',10,2);
 add_filter( 'post_row_actions','jpress_archive_add_archive_link',10,2);
 function jpress_archive_add_archive_link( $actions, $id ) {
-    global $post, $current_screen, $mode;
+    global $post;
 
     $post_type_object = get_post_type_object( $post->post_type );
 
@@ -59,60 +61,65 @@ function jpress_archive_add_archive_link( $actions, $id ) {
         $archive_link =   wp_nonce_url( $archive_link, "jpress_archive-{$post->post_type}_{$post->ID}" );
         $actions['archive'] = '<a href="' . $archive_link
             . '" title="'
-            . esc_attr( __( 'Déplacer dans les archives', 'jpress_archive'  ) )
-            . '">' . __( 'Archiver', 'jpress_archive'  ) . '</a>';
+            . esc_attr( __( 'Move to archive', 'jpress-archive'  ) )
+            . '">' . __( 'Archive', 'jpress-archive'  ) . '</a>';
     }else{
         $archive_link = admin_url( 'admin.php?post=' . $post->ID . '&action=jpress_unset_archive' );
         $archive_link =   wp_nonce_url( $archive_link, "jpress_unset_archive-{$post->post_type}_{$post->ID}" );
         $actions['restore'] = '<a href="' . $archive_link
             . '" title="'
-            . esc_attr( __( 'Restaurer', 'jpress_archive'  ) )
-            . '">' . __( 'Restaurer', 'jpress_archive'  ) . '</a>';
+            . esc_attr( __( 'Restore', 'jpress-archive'  ) )
+            . '">' . __( 'Restore', 'jpress-archive'  ) . '</a>';
     }
 
     return $actions;
 }
 
+//archive process action
+add_action( 'admin_action_-1', 'jpress_archive_post_type'  );
 add_action( 'admin_action_jpress_archive', 'jpress_archive_post_type'  );
 function jpress_archive_post_type () {
-
     if ( ! (
-        isset( $_GET['post']) ||
-        ( isset( $_REQUEST['action']) && 'jpress_archive' == $_REQUEST['action'] )
+        isset( $_GET['post']) &&
+        (
+            ( isset( $_REQUEST['action']) || isset( $_REQUEST['action2']) ) &&
+            ('jpress_archive' == $_REQUEST['action'] || 'jpress_archive' == $_REQUEST['action2'])
+        )
     ) ) {
-        wp_die( __( 'Aucun post à archiver !',  'jpress_archive'  ) );
+        wp_die( __( 'No post to archive !',  'jpress-archive'  ) );
     }
 
-    $id = (int) ( isset( $_GET['post']) ? $_GET['post'] : $_REQUEST['post']);
-
-    if ( $id ) {
+    $ids =  ( isset( $_GET['post']) ? $_GET['post'] : $_REQUEST['post']);
+    $ids = (!is_array($ids)?((array)$ids):$ids);
+    if ( !empty($ids) ) {
+        foreach ( $ids as $id) {
+            // add old post_status to post meta
+            $pst = get_post($id);
+            add_post_meta( $id, 'jpress_archive_old_post_status', $pst->post_status, TRUE );
+            // change post status
+            jpress_change_post_status( $id, 'archived' );
+        }
         $redirect_post_type = '';
-        $archived_post_type = get_post_type( $id );
+        $archived_post_type = get_post_type( $ids[0] );
         if ( ! empty( $archived_post_type ) )
             $redirect_post_type = 'post_type=' . $archived_post_type . '&';
-
-        // add old post_status to post meta
-        $pst = get_post($id);
-        add_post_meta( $id, 'jpress_archive_old_post_status', $pst->post_status, TRUE );
-        // change post status
-        jpress_change_post_status( $id, 'archived' );
-
-        wp_redirect( admin_url( 'edit.php?' . $redirect_post_type . '&post_status=archived&archived=1&ids=' . $id ) );
+        wp_redirect( admin_url( 'edit.php?' . $redirect_post_type . '&post_status=archived&archived=1&ids=' . implode(',',$ids) ) );
         exit;
     } else {
-        wp_die( __( 'Désolé, aucun ID spécifié.', 'jpress_archive' ) );
+        wp_die( __( 'Sorry, no ID specified.', 'jpress-archive' ) );
     }
 
 }
 
+//restore action process
 add_action( 'admin_action_jpress_unset_archive', 'jpress_unset_archive_post_type'  );
 function jpress_unset_archive_post_type () {
 
     if ( ! (
-        isset( $_GET['post']) ||
+        isset( $_GET['post']) &&
         ( isset( $_REQUEST['action']) && 'jpress_unset_archive' == $_REQUEST['action'] )
     ) ) {
-        wp_die( __('Aucun post à restaurer !', 'jpress_archive' ) );
+        wp_die( __('No post to restore !', 'jpress-archive' ) );
     }
 
     $id = (int) ( isset( $_GET['post']) ? $_GET['post'] : $_REQUEST['post']);
@@ -122,6 +129,8 @@ function jpress_unset_archive_post_type () {
         // get archived post type
         $archived_post_type = get_post_type( $id );
         $archived_post_status = get_post_meta( $id, 'jpress_archive_old_post_status', TRUE );
+        $archived_post_status = empty($archived_post_status)?'publish':$archived_post_status;
+
         if ( ! empty( $archived_post_status ) )
             $redirect_post_type = 'post_type=' . $archived_post_type . '&';
         // change post status to old archived post status
@@ -132,11 +141,12 @@ function jpress_unset_archive_post_type () {
         wp_redirect( admin_url( 'edit.php?' . $redirect_post_type . 'unset_archived=1&ids=' . $id ) );
         exit;
     } else {
-        wp_die( __( 'Désolé, aucun ID spécifié', 'jpress_archive' ) );
+        wp_die( __( 'Sorry, no ID specified.', 'jpress-archive' ) );
     }
 
 }
 
+//add admin notice settings
 add_action( 'admin_notices', 'jpress_archive_get_admin_notices'  );
 function jpress_archive_get_admin_notices () {
 
@@ -144,35 +154,33 @@ function jpress_archive_get_admin_notices () {
     settings_errors( 'unset_archived_message' );
 }
 
+//admin message and notice after archive/restore action
 add_action( 'admin_init', 'jpress_archive_add_settings_error' );
 function jpress_archive_add_settings_error () {
 
     $message_archived = NULL;
     $message_unset_archived = NULL;
 
-    if ( isset( $_REQUEST['archived'] ) ) {
+    if (
+            isset( $_REQUEST['ids']) &&
+            (
+                isset( $_REQUEST['archived'] ) ||
+                (
+                    ( isset( $_REQUEST['action']) || isset( $_REQUEST['action2']) ) &&
+                    ('jpress_archive' == $_REQUEST['action'] || 'jpress_archive' == $_REQUEST['action2'])
+                )
+            )
+        ) {
+        $nbrelt = sizeof(explode(',',$_REQUEST['ids']));
         $message_archived = sprintf(
-            _n( 'L\'élément a été déplacé dans les archives.',
-                '%s éléments déplacés dans les archives.',
-                $_REQUEST['archived'],
-                '', 'jpress_archive' ),
-            number_format_i18n( $_REQUEST['archived'] )
+            _n( 'The item was moved to the archives.',
+                '%s items were moved to the archives.',
+                $nbrelt,
+                'jpress-archive'
+            ),
+            $nbrelt
         );
-        $ids = isset( $_REQUEST['ids']) ? $_REQUEST['ids'] : 0;
-    }
 
-    if ( isset( $_REQUEST['unset_archived'] ) ) {
-        $message_unset_archived = sprintf(
-            _n( 'L\'élément a été restauré : %2$s.',
-                '%1$s éléments ont été restauré : %2$s.',
-                $_REQUEST['unset_archived'],
-                '', 'jpress_archive' ),
-            number_format_i18n( $_REQUEST['unset_archived'] ),
-            '<code>' . get_post_type( $_REQUEST['ids'] ) . '</code>'
-        );
-    }
-
-    if ( isset( $_REQUEST['archived'] ) && (int) $_REQUEST['archived'] ) {
         add_settings_error(
             'archived_message',
             'archived',
@@ -181,7 +189,18 @@ function jpress_archive_add_settings_error () {
         );
     }
 
-    if ( isset( $_REQUEST['unset_archived'] ) && (int) $_REQUEST['unset_archived'] ) {
+    if ( isset( $_REQUEST['unset_archived'] ) ) {
+        $nbrelt = sizeof(explode(',',$_REQUEST['ids']));
+        $message_unset_archived = sprintf(
+            _n( 'The item has been restored : %2$s.',
+                '%1$s items were restored : %2$s.',
+                $nbrelt,
+                'jpress-archive'
+            ),
+            $nbrelt,
+            '<code>' . get_post_type( $_REQUEST['ids'] ) . '</code>'
+        );
+
         add_settings_error(
             'unset_archived_message',
             'unset_archived',
@@ -189,11 +208,13 @@ function jpress_archive_add_settings_error () {
             'updated'
         );
     }
+
 }
 
+//change post status for post
 function jpress_change_post_status($id, $ps){
     global $wpdb;
-    //compatibility with jcpt create pst table
+    //compatibility with jcpt create post table
     if(function_exists('jcpt_whois')){
         $post_type = jcpt_whois($id);
         $wpdb->query("UPDATE {$wpdb->prefix}{$post_type}s SET post_status='" . $ps ."' WHERE ID = {$id}");
@@ -202,23 +223,26 @@ function jpress_change_post_status($id, $ps){
     }
 }
 
+//add post status 'archived' to where part of request in list page
 add_filter('posts_where', 'jpress_archive_posts_where');
 function jpress_archive_posts_where($sql){
     global $pagenow, $wpdb;
-    if($pagenow== "edit.php" && strpos($sql, "post_status = 'archived'")){
-        $sql = str_replace("OR {$wpdb->prefix}posts.post_status = 'archived'", ' ',$sql);
+    if($pagenow == 'edit.php' && !isset($_REQUEST['post_status']) && strpos($sql, "post_status = 'publish' OR")){
+        $sql = preg_replace("/AND \(([a-zA-Z_]+).post_status = 'publish' OR/","AND ($1.post_status = 'publish' OR $1.post_status = 'archived' OR", $sql);
     }
     return $sql;
 }
 
+//add 'Archived' information for archived post
 add_filter('display_post_states', 'jpress_archive_display_post_states',10,2);
 function jpress_archive_display_post_states($post_states, $post){
     if($post->post_status == 'archived'){
-        $post_states['archived'] = "Archive";
+        $post_states['archived'] = "<span style='color:#D54E21;'>" . __('Archived','jpress-archive') . "</span>";
     }
     return $post_states;
 }
 
+//add admin scripts
 add_action('admin_footer', 'jpress_archive_append_post_status_list');
 function jpress_archive_append_post_status_list(){
     global $post, $pagenow;
@@ -227,15 +251,29 @@ function jpress_archive_append_post_status_list(){
     if($pagenow == 'post.php' ||$pagenow == 'post-new.php'){
         if($post->post_status == 'archived'){
             $complete = ' selected="selected"';
-            $label = '<span id="post-status-display"> Archivé</span>';
+            $label = '<span id="post-status-display">' . __('Archived','jpress-archive') . '</span>';
         }
-        echo '
-          <script>
-          jQuery(document).ready(function(){
-               jQuery("select#post_status").append(\'<option value="archived" '.$complete.'>Archivé</option>\');
-               jQuery(".misc-pub-section label").append(\''.$label.'\');
-          });
+        ?>
+          <script type="text/javascript">
+              //add post status archived to edit page
+              jQuery(document).ready(function(){
+                   jQuery("select#post_status").append('<option value="archived" <?php echo $complete;?>><?php _e('Archived','jpress-archive');?></option>');
+                   jQuery(".misc-pub-section label").append('<?php echo $label;?>');
+              });
           </script>
-          ';
+        <?php
+    }elseif($pagenow == 'edit.php'){
+          ?>
+          <script type="text/javascript">
+                //add inline edit post status 'archived'
+                jQuery(".inline-edit-status select").append("<option value='archived'><?php _e('Archived','jpress-archive')?></option>");
+
+                //add bulk action 'archive'
+                jQuery(document).ready(function() {
+                    jQuery('<option>').val('jpress_archive').text('<?php _e('Archive','jpress-archive')?>').appendTo("select[name='action']");
+                    jQuery('<option>').val('jpress_archive').text('<?php _e('Archive','jpress-archive')?>').appendTo("select[name='action2']");
+                });
+          </script>
+          <?php
     }
 }
