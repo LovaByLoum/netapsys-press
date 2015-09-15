@@ -6,7 +6,7 @@
  * Description: Manual archive features for all your post types using post status features.
  * Author: Johary Ranarimanana (Netapsys)
  * Author URI: http://www.netapsys.fr/
- * Version: 1.0.0
+ * Version: 1.0.1
  * License: GPLv2 or later
  * Domain Path: /languages/
  */
@@ -51,10 +51,16 @@ function jpress_archive_admin_menu() {
     foreach ( $wp_post_types as $pt => $data ) {
         switch( $pt ) {
             case 'post':
-                $submenu['edit.php'][] = array( 'Archives', 'edit_posts', 'edit.php?post_type=post&post_status=archived' );
+                if ( isset($submenu['edit.php']) ){
+                    $submenu['edit.php'][] = array( 'Archives', 'edit_posts', 'edit.php?post_type=post&post_status=archived' );
+                }
                 break;
             default:
-                $submenu['edit.php?post_type=' . $pt][] = array( 'Archives', 'edit_posts', 'edit.php?post_type=' . $pt . '&post_status=archived' );
+                if ( isset($submenu['edit.php?post_type=' . $pt]) ){
+                    //get first element cap
+                    $first_element =  ( reset($submenu['edit.php?post_type=' . $pt]) );
+                    $submenu['edit.php?post_type=' . $pt][] = array( 'Archives', $first_element[1], 'edit.php?post_type=' . $pt . '&post_status=archived' );
+                }
                 break;
         }
     }
