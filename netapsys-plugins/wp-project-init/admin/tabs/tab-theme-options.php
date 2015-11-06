@@ -1,7 +1,31 @@
-<div class="wpi-notif">
-    <p><strong>ensuite La première étape consiste tout d'abord à generer un thème vide avec lequel vous allez demarrer votre developpement.</strong><br>
-       Par thème vide, on sous-entend que le thème generé possedera les templates standards et natifs de WordPress tout en enlevant les fonctions inutiles et respectant l'arborescence selon le BestPractice et mettre en place divers outils de developpement, librairies frequement utilisés et les mésures de sécurité du site.</p>
-</div>
+<div class="wpi-notif" style="padding-left: 10px;">
+    <p>
+        Ensuite configurer ici les features à integrer dans votre themes.
+    </p>
+    <a href="javascript:void(0);" class="wpi-button show wpi-show" style="display: inline-block;">En savoir plus<span class="wpi-button-arrow show"></span></a>
+    <div class="wpi-notif-section wpi-hide">
+        <p>
+            <ul style="list-style: disc;">
+                <li>Options générales</li>
+                <li>Gestion de font</li>
+                <li>Gestion de couleur</li>
+                <li>Gestion des réseaux sociaux</li>
+                <li>Visual composer</li>
+            </ul>
+            <br>
+            Votre theme comprendra nativement aussi : <br>
+            <ul style="list-style: disc;">
+                <li>Un gestionnaire de minification js/css</li>
+                <li>Un generateur de classes de service</li>
+                <li>Des outils de débogage</li>
+                <li>Un gestionnaire de configuration multi-environnement</li>
+
+            </ul>
+        </p>
+        <a href="javascript:void(0);" class="wpi-button hide" style="float:right;">Fermer<span class="wpi-button-arrow hide"></span></a>
+    </div>
+
+        </div>
 
 <?php
 if(!empty($message)):?>

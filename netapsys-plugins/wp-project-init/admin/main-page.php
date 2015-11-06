@@ -15,7 +15,7 @@ $message = WP_Project_Init_Admin::process_post();
     </h2>
     <div id="tab-content">
         <?php
-        $pathtab = WPI_PATH.'tabs'.DIRECTORY_SEPARATOR.'tab-'.$current_tab.'.php';
+        $pathtab = WPI_PATH . 'admin' . DIRECTORY_SEPARATOR . 'tabs' . DIRECTORY_SEPARATOR . 'tab-' . $current_tab . '.php';
         if(is_file($pathtab)){
             include($pathtab);
         }else{

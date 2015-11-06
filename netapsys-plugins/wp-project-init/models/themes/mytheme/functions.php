@@ -51,6 +51,11 @@ add_action( 'after_setup_theme', 'mytheme_setup' );
 if ( ! function_exists( 'mytheme_setup' ) ):
 function mytheme_setup() {
 
+    //requires files
+    require_once( get_template_directory() . '/inc/custom-sidebar/custom-sidebar.php' );
+
+
+
 	/* Make mytheme available for translation.
 	 * Translations can be added to the /languages/ directory.
 	 * If you're building a theme based on mytheme, use a find and replace
@@ -117,25 +122,6 @@ function mytheme_custom_excerpt_more( $output ) {
 	return $output;
 }
 add_filter( 'get_the_excerpt', 'mytheme_custom_excerpt_more' );
-
-/**
- * Register our sidebars and widgetized areas. Also register the default Epherma widget.
- *
- * @since mytheme 1.0
- */
-function mytheme_widgets_init() {
-
-	register_sidebar( array(
-		'name' => __( 'Main Sidebar', 'mytheme' ),
-		'id' => 'sidebar-1',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget' => "</aside>",
-		'before_title' => '<h3 class="widget-title">',
-		'after_title' => '</h3>',
-	) );
-
-}
-add_action( 'widgets_init', 'mytheme_widgets_init' );
 
 if ( ! function_exists( 'mytheme_comment' ) ) :
 /**
