@@ -35,13 +35,13 @@
  *
  * @package WordPress
  * @subpackage mytheme
- * @since mytheme 1.0
+ * @since mytheme __WPI__THEME__VERSION__
  * @author : __WPI__THEME__AUTHOR__
  */
 
-/**
- * Set the content width based on the theme's design and stylesheet.
- */
+require_once( get_template_directory() . '/inc/constante.inc.php' );
+require_once( get_template_directory() . '/inc/utils/functions.php' );
+require_once( get_template_directory() . '/admin-functions.php' );
 
 /**
  * Tell WordPress to run mytheme_setup() when the 'after_setup_theme' hook is run.
@@ -51,10 +51,15 @@ add_action( 'after_setup_theme', 'mytheme_setup' );
 if ( ! function_exists( 'mytheme_setup' ) ):
 function mytheme_setup() {
 
-    //requires files
-    require_once( get_template_directory() . '/inc/custom-sidebar/custom-sidebar.php' );
-
-
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-sidebar' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-fields/acf' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-metaboxes' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-rules' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-mce-tools' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-shortcodes' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-sidebar' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-types-taxo' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-widgets' );
 
 	/* Make mytheme available for translation.
 	 * Translations can be added to the /languages/ directory.

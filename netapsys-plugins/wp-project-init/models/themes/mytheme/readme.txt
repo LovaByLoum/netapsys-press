@@ -1,5 +1,5 @@
 = mytheme =
 
-* by the __WPI__THEME__AUTHOR__
+* by  __WPI__THEME__AUTHOR__
 
 == ABOUT mytheme ==

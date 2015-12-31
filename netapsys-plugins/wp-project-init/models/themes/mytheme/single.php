@@ -4,7 +4,7 @@
  *
  * @package WordPress
  * @subpackage mytheme
- * @since mytheme 1.0
+ * @since mytheme __WPI__THEME__VERSION__
  * @author : __WPI__THEME__AUTHOR__
  */
 
@@ -88,5 +88,7 @@ get_header(); ?>
 
 			</div><!-- #content -->
 		</div><!-- #primary -->
+
+<?php get_sidebar(); ?>
 
 <?php get_footer(); ?>

@@ -156,6 +156,9 @@ class WP_Generate_Themes{
 
         //author file
         $filecontent = str_replace('__WPI__THEME__AUTHOR__',$this->data->theme_author,$filecontent);
+
+        //theme version
+        $filecontent = str_replace('__WPI__THEME__VERSION__',$this->data->theme_version,$filecontent);
 		
 		//theme info
 		$pathinfo = pathinfo($file);
@@ -163,7 +166,6 @@ class WP_Generate_Themes{
 	    if($filename == 'style.css'){
 	    	$filecontent = str_replace('__WPI__THEME__NAME__',$this->data->theme_name,$filecontent);
 	    	$filecontent = str_replace('__WPI__THEME__DESC__',$this->data->theme_desc,$filecontent);
-	    	$filecontent = str_replace('__WPI__THEME__VERSION__',$this->data->theme_version,$filecontent);
 	    	$filecontent = str_replace('__WPI__THEME__AUTHOR_SITE__',$this->data->theme_author_site,$filecontent);
 	    	$filecontent = str_replace('__WPI__THEME__TAGS__',$this->data->theme_tags,$filecontent);
 	    }

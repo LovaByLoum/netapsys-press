@@ -9,7 +9,7 @@
  *
  * @package WordPress
  * @subpackage mytheme
- * @since mytheme 1.0
+ * @since mytheme __WPI__THEME__VERSION__
  * @author : __WPI__THEME__AUTHOR__
  */
 
