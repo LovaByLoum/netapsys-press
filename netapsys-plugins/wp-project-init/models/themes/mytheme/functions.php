@@ -41,7 +41,14 @@
 
 require_once( get_template_directory() . '/inc/constante.inc.php' );
 require_once( get_template_directory() . '/inc/utils/functions.php' );
-require_once( get_template_directory() . '/admin-functions.php' );
+if (is_admin()){
+  require_once( get_template_directory() . '/admin-functions.php' );
+
+  /*** Theme Option ***/
+  require get_template_directory() . '/theme-options/theme-options.php';
+
+}
+
 
 /**
  * Tell WordPress to run mytheme_setup() when the 'after_setup_theme' hook is run.
