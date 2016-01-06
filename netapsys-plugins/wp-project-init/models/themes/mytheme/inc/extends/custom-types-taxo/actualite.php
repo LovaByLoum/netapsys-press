@@ -3,14 +3,8 @@
  * register post types and taxonomies
  */
 
-add_action('init', 'mytheme_init_posttax',1);
-function mytheme_init_posttax(){
-	init_actus();
-	//add stuff
-}
-
-//actus
-function init_actus(){
+add_action('init', 'mytheme_init_actus',1);
+function mytheme_init_actus(){
   //post type
 	  $labels = get_custom_post_type_labels( 'actualité', 'actualités', 1 );
     $data = array(
@@ -26,7 +20,7 @@ function init_actus(){
 		'labels'               => $labels,
 		'query_var'            => true,
 	);
-	register_post_type( 'actualite', $data);
+	register_post_type( POST_TYPE_ACTUALITE, $data);
 
 	//taxonomies
 	$labels = get_custom_taxonomy_labels( 'Type d\'actualité', 'Types d\'actualité', 1);
@@ -37,7 +31,7 @@ function init_actus(){
     'show_admin_column' => true,
     'query_var'         => true,
 	);
-	register_taxonomy( 'type_actualite', 'actualite', $args );
+	register_taxonomy( TAXONOMY_TYPE_ACTUS, POST_TYPE_ACTUALITE, $args );
 
   //taxonomies
   $labels = get_custom_taxonomy_labels( 'Mot clé', 'Mots clé', 1);
@@ -48,6 +42,6 @@ function init_actus(){
     'show_admin_column' => true,
     'query_var'         => true,
   );
-  register_taxonomy( 'actus_tag', 'actualite', $args );
+  register_taxonomy( TAXONOMY_MOT_CLE_ACTUS, POST_TYPE_ACTUALITE, $args );
 	
 }

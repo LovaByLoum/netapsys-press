@@ -15,10 +15,13 @@
 
 //post types
 define( 'POST_TYPE_ARTICLE', 'article' );
+define( 'POST_TYPE_ACTUALITE', 'actualite' );
 define( 'POST_TYPE_PAGE', 'page' );
 
 //taxonomies
 define( 'TAXONOMOMY_CATEGORY', 'category' );
 define( 'TAXONOMOMY_TAG', 'post_tag' );
+define( 'TAXONOMY_TYPE_ACTUS', 'type_actualite' );
+define( 'TAXONOMY_MOT_CLE_ACTUS', 'actus_tag' );
 
 //....

@@ -48,7 +48,8 @@ if (is_admin()){
   require get_template_directory() . '/theme-options/theme-options.php';
 
 }
-
+global $mytheme_options;
+$mytheme_options = get_option( 'mytheme_theme_options' );
 
 /**
  * Tell WordPress to run mytheme_setup() when the 'after_setup_theme' hook is run.
