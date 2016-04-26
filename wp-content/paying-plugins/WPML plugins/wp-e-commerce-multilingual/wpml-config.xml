@@ -1,0 +1,21 @@
+<wpml-config>
+    <custom-types>
+        <custom-type translate="1">wpsc-product</custom-type> 
+        <custom-type translate="1">promotion</custom-type> 
+        <custom-type translate="1">sliders</custom-type> 
+        <custom-type translate="1">testimonials</custom-type> 
+    </custom-types>
+    <taxonomies>
+        <taxonomy translate="1">wpsc_product_category</taxonomy>
+        <taxonomy translate="1">product_tag</taxonomy>
+    </taxonomies>
+    <custom-fields>
+        <custom-field action="copy">_wpsc_price</custom-field>
+        <custom-field action="copy">_wpsc_special_price</custom-field>
+        <custom-field action="copy">_wpsc_is_donation</custom-field>
+        <custom-field action="copy">_wpsc_sku</custom-field>
+        <custom-field action="copy">_wpsc_stock</custom-field>
+        <custom-field action="copy">_wpsc_product_metadata</custom-field>
+        <custom-field action="copy">_wpsc_currency</custom-field>
+    </custom-fields>
+</wpml-config>
