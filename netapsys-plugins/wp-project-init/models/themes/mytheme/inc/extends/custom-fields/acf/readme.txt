@@ -1,3 +1,0 @@
-- Exporter vos champs ACF via la fonctionnalité d'export de ACF (Advanced Custom Fields)
-- Créer un fichier .php ici avec le contenu exporté
-- Votre fichier sera automatiquement appelé, pas de besoin de faire un include
