@@ -8,6 +8,7 @@ Author: Johary Ranarimanana
 require_once('inc/constante.php');
 require_once('admin/inc/admin.class.php');
 require_once('inc/generate_themes.class.php');
+require_once('inc/zipper.php');
 
 class WP_Project_Init{
 	
@@ -15,32 +16,62 @@ class WP_Project_Init{
 		//add hook callback
 		add_action('admin_menu', array($this,'admin_menu'));
 
-        add_action('admin_print_styles', array($this, 'admin_print_styles'));
-        add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
+    add_action('admin_print_styles', array($this, 'admin_print_styles'));
+    add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
+    add_action('admin_init', array($this, 'admin_init'));
 		
 	}
 
-    //add main admin menu
+  //add main admin menu
 	static function admin_menu(){
 		add_menu_page('Project Init', 'Project Init', 'manage_options','project-init','WP_Project_Init::admin_page', plugin_dir_url(__FILE__). '/medias/images/cog_4.png');
 		
 	}
 
-    //add css
-    static function admin_print_styles(){
-        wp_enqueue_style('project-init',plugin_dir_url(__FILE__).'admin/css/project-init.css');
-    }
+  //add css
+  static function admin_print_styles(){
+      wp_enqueue_style('project-init',plugin_dir_url(__FILE__).'admin/css/project-init.css');
+  }
 
-    //add js
-    static function admin_enqueue_scripts(){
-        wp_enqueue_script('project-init',plugin_dir_url(__FILE__).'admin/js/project-init.js');
-    }
+  //add js
+  static function admin_enqueue_scripts(){
+      wp_enqueue_script('project-init',plugin_dir_url(__FILE__).'admin/js/project-init.js');
+  }
 
-    //admin main page tpl
+  //admin main page tpl
 	static function admin_page(){
 		include 'admin/main-page.php';
 	}
+
+  static function admin_init(){
+    if ( isset($_REQUEST['action']) && 'export_theme' == $_REQUEST['action'] && isset($_REQUEST['theme']) && !empty($_REQUEST['action']) && isset($_REQUEST['nonce']) && !empty($_REQUEST['nonce']) ){
+      $theme_slug = $_REQUEST['theme'];
+      if ( wp_verify_nonce( $_REQUEST['nonce'], 'theme-' . $theme_slug ) ){
+        $zip = new Zipper();
+        $filename = $theme_slug . ".zip";
+        $filepath = ABSPATH . $filename;
+        if ( $zip->open($filepath, ZipArchive::OVERWRITE) !== true ) {
+          wp_die("Impossible d'ouvrir le fichier <$filepath>.");
+        }
+        $theme_path = get_theme_root() . DIRECTORY_SEPARATOR . $theme_slug;
+        if(file_exists($theme_path)){
+          $zip->addDir( $theme_path, $theme_slug );
+        }
+        $zip->close();
+        if( file_exists($filepath) ){
+          // push to download the zip
+          header( 'Content-Type: application/force-download' );
+          header( 'Content-Transfer-Encoding: binary' );
+          header('Content-Disposition: attachment; filename="'.$filename.'"');
+          readfile($filepath);
+          // remove zip file is exists in temp path
+          unlink($filepath);
+          die;
+        }
+      }
+    }
+  }
 }
 global $wp_project_init;
 $wp_project_init = new WP_Project_Init();

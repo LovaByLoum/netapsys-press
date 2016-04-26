@@ -32,9 +32,9 @@ class WP_Generate_Themes{
 		
 		//logo admin
 		move_uploaded_file($this->data->theme_logo_admin['tmp_name'],$fullpath.DIRECTORY_SEPARATOR.'images/logo_admin.png');
-			
-		
-		$msg='Votre thème a été generé : <a target="__blank" href="' . site_url('wp-admin/themes.php').'">Voir</a>';
+
+    $nonce_export = wp_create_nonce('theme-' . $this->data->theme_slug);
+		$msg='Votre thème a été generé : <a target="__blank" href="' . site_url('wp-admin/themes.php').'">Voir</a> ou <a href="' . site_url('wp-admin/') . '?action=export_theme&theme=' . $this->data->theme_slug . '&nonce=' . $nonce_export . '">Exporter</a>';
 		return $msg;
 	}
 	
