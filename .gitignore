@@ -1,0 +1,115 @@
+wp-content/uploads/*
+wp-content/logs/*
+
+# Ignore htaccess due to multiple environment protection.
+#.htaccess
+
+
+# Fichiers crees lors de conflits.
+*.orig
+
+# Fichiers specifiques a Edit plus.
+*.bak
+
+# Fichiers specifique a Eclipse et Aptana.
+*.settings/*
+*.project
+
+# Fichiers specifique a PHPStorm.
+*.idea/*
+
+# Fichiers specifique a Komodo.
+*.komodoproject
+*.kpf
+*.komodotools/*
+
+# Fichiers specifique a Netbeans.
+nbproject/*
+
+# Parasites generes par Windows.
+Thumbs.db
+
+# Fichiers journaux.
+*.log
+
+# Archives et fichiers compresses.
+#*.gz
+#*.7z
+#*.rar
+#*.tar
+#*.zip
+
+# Repertoire git des modules de contrib:
+.git/
+
+# Ficher patch et de rejet d'applications du patch.
+*.rej
+*.patch
+
+# Fichier generer par l'editeur phpstorm
+.idea/
+*.scssc
+sitemap.xml
+sitemap.xml.gz
+wp-content/themes/europcar/svg/clock.svg
+wp-content/themes/europcar/svg/local.svg
+wp-content/themes/europcar/svg/perso.svg
+wp-content/themes/europcar/svg/upload.svg
+wp-content/themes/europcar/svg/Lato (1).zip
+wp-content/themes/europcar/svg/Lato (1)/Lato-Black.ttf
+wp-content/themes/europcar/svg/Lato (1)/Lato-BlackItalic.ttf
+wp-content/themes/europcar/svg/Lato (1)/Lato-Bold.ttf
+wp-content/themes/europcar/svg/Lato (1)/Lato-BoldItalic.ttf
+wp-content/themes/europcar/svg/Lato (1)/Lato-Hairline.ttf
+wp-content/themes/europcar/svg/Lato (1)/Lato-HairlineItalic.ttf
+wp-content/themes/europcar/svg/Lato (1)/Lato-Italic.ttf
+wp-content/themes/europcar/svg/Lato (1)/Lato-Light.ttf
+wp-content/themes/europcar/svg/Lato (1)/Lato-LightItalic.ttf
+wp-content/themes/europcar/svg/Lato (1)/Lato-Regular.ttf
+wp-content/themes/europcar/svg/Lato (1)/OFL.txt
+wp-content/themes/europcar/svg/Open_Sans.zip
+wp-content/themes/europcar/svg/arrow-down.svg
+wp-content/themes/europcar/svg/arrow-top.svg
+wp-content/themes/europcar/svg/arrowright.svg
+wp-content/themes/europcar/svg/close.svg
+wp-content/themes/europcar/svg/facebook.svg
+wp-content/themes/europcar/svg/googleplus.svg
+wp-content/themes/europcar/svg/icomoon-europcar.zip
+wp-content/themes/europcar/svg/icomoon-europcar/Read Me.txt
+wp-content/themes/europcar/svg/icomoon-europcar/demo-files/demo.css
+wp-content/themes/europcar/svg/icomoon-europcar/demo-files/demo.js
+wp-content/themes/europcar/svg/icomoon-europcar/demo.html
+wp-content/themes/europcar/svg/icomoon-europcar/fonts/icomoon.eot
+wp-content/themes/europcar/svg/icomoon-europcar/fonts/icomoon.svg
+wp-content/themes/europcar/svg/icomoon-europcar/fonts/icomoon.ttf
+wp-content/themes/europcar/svg/icomoon-europcar/fonts/icomoon.woff
+wp-content/themes/europcar/svg/icomoon-europcar/selection.json
+wp-content/themes/europcar/svg/icomoon-europcar/style.css
+wp-content/themes/europcar/svg/icomoon-europcar1.zip
+wp-content/themes/europcar/svg/icomoon-europcar1/Read Me.txt
+wp-content/themes/europcar/svg/icomoon-europcar1/demo-files/demo.css
+wp-content/themes/europcar/svg/icomoon-europcar1/demo-files/demo.js
+wp-content/themes/europcar/svg/icomoon-europcar1/demo.html
+wp-content/themes/europcar/svg/icomoon-europcar1/fonts/icomoon.eot
+wp-content/themes/europcar/svg/icomoon-europcar1/fonts/icomoon.svg
+wp-content/themes/europcar/svg/icomoon-europcar1/fonts/icomoon.ttf
+wp-content/themes/europcar/svg/icomoon-europcar1/fonts/icomoon.woff
+wp-content/themes/europcar/svg/icomoon-europcar1/selection.json
+wp-content/themes/europcar/svg/icomoon-europcar1/style.css
+wp-content/themes/europcar/svg/linkedin.svg
+wp-content/themes/europcar/svg/mail.svg
+wp-content/themes/europcar/svg/twitter.svg
+.htaccess.old
+wp-content/plugins/wordpress-form-manager/templates/fm-form-franchise.php
+wp-content/themes/europcar/svg/arrow-right-thin.svg
+wp-content/themes/europcar/svg/icomoon-europcar_10092015.zip
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/Read Me.txt
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/demo-files/demo.css
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/demo-files/demo.js
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/demo.html
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/fonts/icomoon.eot
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/fonts/icomoon.svg
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/fonts/icomoon.ttf
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/fonts/icomoon.woff
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/selection.json
+wp-content/themes/europcar/svg/icomoon-europcar_10092015/style.css
