@@ -1,0 +1,61 @@
+----------- WP PROJECT INIT OBJECTIVES -------------------------------------------------------------------- 
+
+- Faciliter l'initialisation de projet
+- Mettre en place tous les best practice WordPress 
+- Uniformisation
+- Mettre en place les plugins recommandés
+- Mettre en place les outils de sécurisation de site, d'optimisation de performance, de developpement et de test IC 
+
+----------- WP PROJECT INIT FEATURES ---------------------------------------------------------------------- 
+
+- Genèration d'un thème à partir d'un thème vide avec les informations basiques (nom theme, description, tag, auteur, screenshot, logoadmin, prefixe des fonctions, configuration des templates)
+- Configuration du theme options :
+	. Mise en place des configurations basiques (Options générales, font, couleur, import/export, minification des script et styles)
+	. Pouvoir ajouter d'autres fonctionnalités propre au thème comme l'option responsive, et d'autres options personnalisés
+	. Configuration des droits du theme options
+- Configuration du thème et fonctionnalités via le theme options :
+	. Options générales (favicon, google analytics, 
+	. Couleur et typographie du site
+	. Header (logo, slogan)
+	. Footer (copyright, colonne, reseaux sociaux)
+	. Comptes réseaux sociaux
+	. Blog
+	. Page de contact
+	. CSS/JS : 
+		- Minification js/css selon l'environnement
+		- Gestion version jquery
+		- Gestion des plugins jquery
+    . Mode debug
+	. Editeur :
+		- Classique : 
+			- Permettre l'ajout de nouvel fonctionnalité (extension, bouton) 
+			- Configuration (wpautop, remove_linebreaks, apply_source_formatting)
+		- Visual composer (configuration et personnalisation))
+	. Theme information (docs) 
+- Generateur de classes de service (type de publication, taxonomies, champs personnalisés (meta) du site) pour mieux manipuler les entités dans le thème
+- Outils de debogage
+- Mise en place des plugins recommandés (cache, securité, champs personnalisés, backup, migration, etc ...)
+- Outils de performance et optimisation (minification js/css, chargement des image en lazyload, cache de zone, cache js)
+- Mise en place des mesures de sécurité :
+	. Désactiver la remise à zéro du mot de passe de WordPress
+	. Désactiver l'autocompletion de mots de passe
+	. Désactiver l'affichage de version WP
+	. Login lock down : empêche les nombreuses tentatives de login
+	. Htaccess admin
+	. Empêche les requettes pour obtenir le login superadmin ?author=1
+- Outils de configuration multi-environnement :
+	. config.php pour chaque environnement
+	. htaccess configuré en multi-environnement avec les règles de securité
+- Mise en place de librairies tierces (mobile detect, etc ...)
+- Gestion git/hg :
+	. git/hg ignore
+- Mise en place et configuration des tests Unit et d'IC (Jenkins, )	
+
+	
+	
+	
+	
+	
+	
+
+

@@ -1,0 +1,55 @@
+.jpress_gallery_main_container{
+	position: relative;
+	display: block;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	line-height: 1.2em;
+	width: 97%;
+	height: 100%;
+	border-bottom:1px dashed #FB661E;
+	margin-bottom:20px;
+}
+.masonry_container{
+	position: relative;
+	display: compact;
+	margin: 0 0 20px 0;
+	padding: 0;
+	padding-top: 20px;
+	border: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	line-height: 1.2em;
+	width: 100%;
+	height: auto;
+	
+}
+.jpress_gallery_mansory{
+	position: absolute;
+	display: block;
+	height:auto;
+	float:left;
+	margin:0px;
+}
+.jpress_gallery_mansory a{
+	position: relative;
+	display: block;
+	width: auto;
+}
+.jpress_gallery_mansory a:hover{
+	opacity:0.8;
+}
+
+#jpress_gallery_desc{
+	margin-top:15px;
+}
+
+.jpress_gallery_main_container h4{
+	font-family: 'Helvetica45LightRegular';
+	font-size:2.5em!important;
+}
+
+#fancybox-loading div{
+	left:17px;
+}

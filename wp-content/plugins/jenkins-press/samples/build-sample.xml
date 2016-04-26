@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${JP_PROJECT_NAME}" default="build" basedir="${JP_BASEDIR}">
+    <condition property="script-suffix" value="${JP_SCRIPT_SUFFIX}" else="">
+        <os family="windows" />
+    </condition>
+    <condition property="std-error" value="" else="/dev/null">
+        <os family="windows" />
+    </condition>
+
+    ${JP_PHPFILES_SECTION}
+    <fileset id="php-files" dir="${basedir}">
+        ${JP_INCLUDE_FILES}
+        ${JP_EXCLUDE_FILES}
+    </fileset>
+    ${JP_PHPFILES_SECTION_END}
+
+    <target name="clean">
+        <!-- Clean up -->
+        <delete dir="${basedir}/dev/build"/>
+
+        <!-- Create build directories -->
+        <mkdir dir="${basedir}/dev/build/api"/>
+        <mkdir dir="${basedir}/dev/build/code-browser"/>
+        <mkdir dir="${basedir}/dev/build/coverage"/>
+        <mkdir dir="${basedir}/dev/build/logs"/>
+        <mkdir dir="${basedir}/dev/build/pdepend"/>
+    </target>
+
+    <!-- Run pdepend, phpmd, phpcpd, and phpcs in parallel -->
+    <target name="parallelTasks">
+        <parallel>
+            <!-- antcall target="pdepend"/ -->
+            <antcall target="phpmd"/>
+            <antcall target="phpcpd"/>
+            <antcall target="phpcs"/>
+        </parallel>
+    </target>
+
+    ${JP_PDEPEND_SECTION}
+    <!-- Generate jdepend.xml and software metrics charts -->
+    <target name="pdepend" description="Calculate software metrics using PHP_Depend">
+        <exec executable="pdepend${script-suffix}">
+            <arg value="--ignore=${JP_PDEPENDIGNORE}" />
+            <arg value="--jdepend-xml=${basedir}/dev/build/logs/jdepend.xml" />
+            <arg value="--jdepend-chart=${basedir}/dev/build/pdepend/dependencies.svg" />
+            <arg value="--overview-pyramid=${basedir}/dev/build/pdepend/overview-pyramid.svg" />
+            ${JP_PDEPENDPATH}
+        </exec>
+    </target>
+    ${JP_PDEPEND_SECTION_END}
+
+    ${JP_PMD_SECTION}
+    <!-- Generate pmd.xml -->
+    <target name="phpmd">
+        <exec executable="phpmd${script-suffix}">
+            <arg path="${JP_PMDPATH}" />
+            <arg value="xml" />
+            <arg value="unusedcode" />
+            <arg value="--reportfile" />
+            <arg value="${basedir}/dev/build/logs/pmd.xml" />
+            <arg value="--exclude" />
+            <arg value="${JP_PMDIGNORE}" />
+        </exec>
+    </target>
+    ${JP_PMD_SECTION_END}
+
+    ${JP_PHPCPD_SECTION}
+    <!-- Generate pmd-cpd.xml -->
+    <target name="phpcpd">
+        <exec executable="phpcpd${script-suffix}">
+            <arg value="--log-pmd" />
+            <arg value="${basedir}/dev/build/logs/pmd-cpd.xml" />
+            <arg value="--exclude" />
+            <arg path="${JP_PHPCPDIGNORE}" />
+            ${JP_PHPCPDPATH}
+        </exec>
+    </target>
+    ${JP_PHPCPD_SECTION_END}
+
+    ${JP_CHECKSTYLE_SECTION}
+    <!-- Generate checkstyle.xml -->
+    <target name="phpcs">
+        <exec executable="phpcs${script-suffix}" output="${basedir}/dev/build/logs/phpcs.error.log">
+            <arg value="--report=checkstyle" />
+            <arg value="--report-file=${basedir}/dev/build/logs/checkstyle.xml" />
+            <arg value="--standard=Wordpress" />
+            <arg value="--ignore=${JP_CHECKSTYLEIGNORE}" />
+            ${JP_CHECKSTYLEPATH}
+        </exec>
+    </target>
+    ${JP_CHECKSTYLE_SECTION_END}
+
+    <!-- Generate API documentation -->
+    <target name="phpdoc">
+        <exec executable="phpdoc">
+            <arg line=" -f ${basedir}/**.php -t ${basedir}/dev/build/api" />
+        </exec>
+    </target>
+
+    ${JP_CB_SECTION}
+    <!-- Generate Code for CodeBrowser -->
+    <target name="phpcb">        
+        <exec executable="phpcb${script-suffix}">
+            <arg value="--log" />
+            <arg path="${basedir}/dev/build/logs" />
+            <arg value="--ignore" />
+            <arg path="${JP_CBIGNORE}" />
+            <arg value="--source" />
+            ${JP_CBPATH}
+            <arg value="--output" />
+            <arg path="${basedir}/dev/build/code-browser" />
+        </exec>
+    </target>
+    ${JP_CB_SECTION_END}
+
+    <!-- For push -->
+    <target name="build-lite" depends="clean,parallelTasks" />
+
+    <!-- For push -->
+    <target name="build-complete" depends="clean,parallelTasks,phpdoc" />
+
+    <target name="build" depends="build-lite" />
+
+</project>

@@ -1,0 +1,3 @@
+body .share { text-align:right; max-width:960px; margin:0 auto; }
+body .share a { text-decoration:none; color:#999999; font-size:14px; font-family:Arial, Helvetica, sans-serif; background:url(../pics/picto-download3.png) no-repeat 3px 0; height:25px; display:inline-block; padding:4px 0 0 32px; margin:10px 0; }
+body .share a:hover { text-decoration:underline; }
