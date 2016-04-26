@@ -19,7 +19,7 @@
 
 // ** Réglages MySQL - Votre hébergeur doit vous fournir ces informations. ** //
 /** Nom de la base de données de WordPress. */
-define('DB_NAME', 'netapsys_press');
+define('DB_NAME', 'netapsys-press');
 
 /** Utilisateur de la base de données MySQL. */
 define('DB_USER', 'root');
