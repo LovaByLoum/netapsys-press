@@ -42,6 +42,12 @@
 require_once( get_template_directory() . '/inc/constante.inc.php' );
 require_once( get_template_directory() . '/inc/utils/functions.php' );
 require_once( get_template_directory() . '/login.php' );
+
+//classes de service
+require_once_files_in( get_template_directory() . '/inc/classes/posttype' );
+require_once_files_in( get_template_directory() . '/inc/classes/taxonomy' );
+require_once_files_in( get_template_directory() . '/inc/classes/user' );
+
 if (is_admin()){
   require_once( get_template_directory() . '/admin-functions.php' );
 

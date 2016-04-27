@@ -14,7 +14,7 @@ function mytheme_logo_head(){
   <link rel="shortcut icon" href="' . get_template_directory_uri(). '/images/favicon.ico" type="image/x-icon" />
   <style>
 			.login h1 a {
-				background-image: url("' . get_template_directory_uri().  '"/images/logo_admin.png");
+				background-image: url("' . get_template_directory_uri().  '/images/logo_admin.png");
 				background-size: contain;
 				background-position: top center;
 				background-repeat: no-repeat;
