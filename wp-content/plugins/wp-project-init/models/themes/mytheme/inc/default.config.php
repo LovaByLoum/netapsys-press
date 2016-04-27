@@ -29,7 +29,7 @@ function mytheme_default_the_content($html){
   //charger en lazy load les images wp-image
   $html = preg_replace_callback(
     '!<img(.+?)>!',
-    array($this,'wp_do_lazyload_wpimage'),
+    'wp_do_lazyload_wpimage',
     $html
   );
   return $html;
