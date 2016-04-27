@@ -1,4 +1,7 @@
 <?php
+/**
+ * Exemple de champs personnalisés custom
+ */
 
 /**
  * Initialisation
@@ -12,9 +15,9 @@ function mytheme_init_metabox_post(){
  * Ajout des champs
  */
 function mytheme_field_note_post($post){
-  echo '<select name="post_note">';
+  echo '<select name="' . FIELD_POST_POST_NOTE . '">';
   $notes = range(1,5);
-  $selected_value = get_post_meta( $post->ID, 'post_note', true );
+  $selected_value = get_post_meta( $post->ID, FIELD_POST_POST_NOTE, true );
   foreach ( $notes as $note ) {
     echo '<option value="' . $note . '" ' . ( $selected_value==$note ? ' selected ' : '' ) . '>' . $note . '</option>';
   }
@@ -24,7 +27,7 @@ function mytheme_field_note_post($post){
 /** sauvegarde valeur champ */
 add_action( 'save_post', 'mytheme_save_posts_mb_post_value', 10, 2);
 function mytheme_save_posts_mb_post_value( $post_id, $post ){
-  if ( is_admin() && $post->post_type == 'post' && isset($_POST['post_note']) ){
-    update_post_meta($post->ID, 'post_note', intval($_POST['post_note']) );
+  if ( is_admin() && $post->post_type == POST_TYPE_ARTICLE && isset($_POST[FIELD_POST_POST_NOTE]) ){
+    update_post_meta($post->ID, FIELD_POST_POST_NOTE, intval($_POST[FIELD_POST_POST_NOTE]) );
   }
 }

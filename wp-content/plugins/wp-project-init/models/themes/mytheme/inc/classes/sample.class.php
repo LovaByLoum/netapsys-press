@@ -52,7 +52,7 @@ class CSample {
    * 
    */
   public static function getBy($tax = null) {
-	$args = array (
+	  $args = array (
       'post_type' => 'SAMPLE',
       'post_status' => 'publish',
       'numberposts' => -1,
@@ -62,7 +62,7 @@ class CSample {
       'fields' => 'ids' 
     );
 	
-	if(!is_null($sport)) {
+	  if(!is_null($tax)) {
       $args['tax_query'][] = array (
         'taxonomy' => 'TAXONOMY',
         'field' => 'id',

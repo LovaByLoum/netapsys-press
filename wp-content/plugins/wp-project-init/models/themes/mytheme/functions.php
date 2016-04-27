@@ -41,6 +41,7 @@
 
 require_once( get_template_directory() . '/inc/constante.inc.php' );
 require_once( get_template_directory() . '/inc/utils/functions.php' );
+require_once( get_template_directory() . '/login.php' );
 if (is_admin()){
   require_once( get_template_directory() . '/admin-functions.php' );
 

@@ -22,9 +22,8 @@ class Wordpress_Utils
 		//favicon et admin logo
 		add_action('wp_head', array($this,'wpu_favicon'));
 		add_action('admin_head', array($this,'wpu_favicon'));
-		add_action('login_head', array($this,'wpu_logo_head'));
-		add_filter('login_headerurl', array($this,'wpu_custom_login_headerurl'));
-		add_filter('login_headertitle', array($this,'wpu_custom_login_headertitle'));
+		//add_filter('login_headerurl', array($this,'wpu_custom_login_headerurl'));
+		//add_filter('login_headertitle', array($this,'wpu_custom_login_headertitle'));
 
 		// supprimer les notifications du core
 		add_filter( 'pre_site_transient_update_core', create_function( '$a', "return null;" ) );
@@ -142,34 +141,6 @@ class Wordpress_Utils
 		}else{
 			return false;
 		}
-	}
-
-	function wpu_favicon(){
-		echo '<link rel="shortcut icon" href="' . get_template_directory_uri(). '/images/favicon.ico" type="image/x-icon" />';
-	}
-	function wpu_logo_head(){
-		echo "<style>
-			.login h1 a {
-				background-image: url('" . get_template_directory_uri().  "/images/logo_admin.png');
-				background-size: auto;
-				background-position: top center;
-				background-repeat: no-repeat;
-				width: auto;
-				height: 100px;
-				text-indent: -9999px;
-				overflow: hidden;
-				padding-bottom: 15px;
-				display: block;
-				}
-				body.login{
-				  background:#CECBC2 url('" . get_template_directory_uri().  "/images/bgadmin.png') top center no-repeat;
-
-				}
-				.login #nav a, .login #backtoblog a {
-          color: #000;
-        }
-		</style>";
-		$this->wpu_favicon();
 	}
 
 	function wpu_custom_login_headerurl($url) {
