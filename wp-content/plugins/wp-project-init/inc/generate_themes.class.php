@@ -43,14 +43,17 @@ class WP_Generate_Themes{
 		$nodes = glob($path . '/*');
 	    foreach ($nodes as $node) {
 	        if(is_dir($node)){
+            $copy = $this->copy_or_not($node);
+            if ( !$copy ) continue;
+
 	        	$pathinfo = pathinfo($node);
 	        	$filename = $pathinfo['basename'];
 	        	$fullpath = $dest.DIRECTORY_SEPARATOR.$filename;
 	        	if(!file_exists($fullpath)){
-					$b = mkdir($fullpath);
-					if(!$b) $msg.= 'Can\'t create folder ' . $fullpath . '<br>';
-				}
-	            $msg .= $this->copy_theme_dir($node,$fullpath);
+              $b = mkdir($fullpath);
+              if(!$b) $msg.= 'Can\'t create folder ' . $fullpath . '<br>';
+            }
+	          $msg .= $this->copy_theme_dir($node,$fullpath);
 	        }elseif (is_file($node))  {
 	        	$pathinfo = pathinfo($node);
 	        	$filename = $pathinfo['basename'];
@@ -75,51 +78,56 @@ class WP_Generate_Themes{
 	}
 
     //check if we copy files( template)
-    public function copy_or_not($fullpath,$filename){
-        //archive.php
-        if($filename == 'archive.php' && !isset($this->data->theme_tpl_archive)){
-            return false;
-        }
+    public function copy_or_not($fullpath,$filename = ''){
+      //archive.php
+      if($filename == 'archive.php' && !isset($this->data->theme_tpl_archive)){
+          return false;
+      }
 
-        //author.php
-        if($filename == 'author.php' && !isset($this->data->theme_tpl_author)){
-            return false;
-        }
+      //author.php
+      if($filename == 'author.php' && !isset($this->data->theme_tpl_author)){
+          return false;
+      }
 
-        //attachment.php
-        if($filename == 'attachment.php' && !isset($this->data->theme_tpl_attachment)){
-            return false;
-        }
+      //attachment.php
+      if($filename == 'attachment.php' && !isset($this->data->theme_tpl_attachment)){
+          return false;
+      }
 
-        //category.php
-        if($filename == 'category.php' && !isset($this->data->theme_tpl_category)){
-            return false;
-        }
+      //category.php
+      if($filename == 'category.php' && !isset($this->data->theme_tpl_category)){
+          return false;
+      }
 
-        //comments.php
-        if($filename == 'comments.php' && !isset($this->data->theme_tpl_comment)){
-            return false;
-        }
+      //comments.php
+      if($filename == 'comments.php' && !isset($this->data->theme_tpl_comment)){
+          return false;
+      }
 
-        //taxonomy.php
-        if($filename == 'taxonomy.php' && !isset($this->data->theme_tpl_taxonomy)){
-            return false;
-        }
+      //taxonomy.php
+      if($filename == 'taxonomy.php' && !isset($this->data->theme_tpl_taxonomy)){
+          return false;
+      }
 
-        //date.php
-        if($filename == 'date.php' && !isset($this->data->theme_tpl_date)){
-            return false;
-        }
+      //date.php
+      if($filename == 'date.php' && !isset($this->data->theme_tpl_date)){
+          return false;
+      }
 
-        //search.php
-        if(($filename == 'search.php' || $filename == 'searchform.php') && !isset($this->data->theme_tpl_search)){
-            return false;
-        }
+      //search.php
+      if(($filename == 'search.php' || $filename == 'searchform.php') && !isset($this->data->theme_tpl_search)){
+          return false;
+      }
 
-        //tag.php
-        if($filename == 'tag.php' && !isset($this->data->theme_tpl_tag)){
-            return false;
-        }
+      //tag.php
+      if($filename == 'tag.php' && !isset($this->data->theme_tpl_tag)){
+          return false;
+      }
+
+      //theme options
+      if ( is_dir($fullpath) && preg_match('!(theme-options)$!', $fullpath) &&  !isset($this->data->theme_options)){
+        return false;
+      }
 
         return true;
     }

@@ -52,8 +52,9 @@ if (is_admin()){
   require_once( get_template_directory() . '/admin-functions.php' );
 
   /*** Theme Option ***/
-  require get_template_directory() . '/theme-options/theme-options.php';
-
+  if ( is_dir( get_template_directory() . '/theme-options' ) ){
+    require get_template_directory() . '/theme-options/theme-options.php';
+  }
 }
 global $mytheme_options;
 $mytheme_options = get_option( 'mytheme_theme_options' );

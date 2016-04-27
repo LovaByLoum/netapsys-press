@@ -6,7 +6,7 @@
 class WP_Project_Init_Admin{
 	static $_tabs = array(
 	    'generate-themes' => 'Generateur de thème',
-	    'theme-options' => 'Thème options',
+	    'plugin-install' => 'Plugin de base',
 	);
 	static $_required = array();
 	static $_error = array();

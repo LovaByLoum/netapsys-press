@@ -142,6 +142,15 @@ if(!empty($message)):?>
             </tbody>
         </table>
     </fieldset>
+    <br>
+    <br>
+    <fieldset class="bordered">
+      <h3>Options du thème :</h3>
+      <label>Activer ici le theme options si votre thème a besoin d'une interface personnalisée pour gérer les options du thème. </label>
+      <br>
+      <br>
+      <?php WP_Project_Init_Admin::render_fields('checkbox', 'theme_options',false,'Activer le theme option panel');?>
+    </fieldset>
 
     <?php WP_Project_Init_Admin::hidden_fields();?>
     <p class="submit"><input type="submit" name="<?php echo $current_tab;?>" id="submit" class="button button-primary" value="Generer"></p>
