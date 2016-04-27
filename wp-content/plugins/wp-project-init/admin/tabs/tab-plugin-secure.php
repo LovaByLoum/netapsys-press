@@ -31,19 +31,19 @@ if(!empty($message)):?>
     <tr>
       <th scope="row">Login Captcha</th>
       <td>
-        <?php WP_Project_Init_Admin::render_fields('checkbox','mu_captcha',false,'Activer le captcha sur le login form');?>
+        <?php WP_Project_Init_Admin::render_fields('checkbox','mu_captcha',false,'Activer le captcha sur le login form', 'checked');?>
       </td>
     </tr>
     <tr>
       <th scope="row">Login lock down</th>
       <td>
-        <?php WP_Project_Init_Admin::render_fields('checkbox','mu_lock',false,'Activer le loginlock down sur le login form.<br>Bloque les Ips des utilisateurs ayant fait plusieurs tentatives de login infructueuses pendant un laps de temps configurable.');?>
+        <?php WP_Project_Init_Admin::render_fields('checkbox','mu_lock',false,'Activer le loginlock down sur le login form.<br>Bloque les Ips des utilisateurs ayant fait plusieurs tentatives de login infructueuses pendant un laps de temps configurable.' , 'checked');?>
       </td>
     </tr>
     <tr>
       <th scope="row">WP Secure</th>
       <td>
-        <?php WP_Project_Init_Admin::render_fields('checkbox','mu_secure',false,'Activer divers scripts de sécurisation');?>
+        <?php WP_Project_Init_Admin::render_fields('checkbox','mu_secure',false,'Activer divers scripts de sécurisation', 'checked');?>
       </td>
     </tr>
     </tbody>

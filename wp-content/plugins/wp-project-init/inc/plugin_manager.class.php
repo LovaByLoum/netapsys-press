@@ -53,12 +53,16 @@ class WP_Plugin_Manager{
         foreach ( $plugins_to_activate as $plugin ){
           $plugin = trim($plugin);
           if ( !is_dir( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $plugin) ){
+            //install
             $api = plugins_api('plugin_information', array('slug' => $plugin, 'fields' => array('sections' => false) ) );
             $upgrader = new Plugin_Upgrader( new Plugin_Installer_Skin( compact('title', 'url', 'nonce', 'plugin', 'api') ) );
             $upgrader->install($api->download_link);
+
+            //acivate
             $plugin_path = WP_Project_Init_Admin::get_plugin_path($plugin);
             activate_plugin( $plugin_path, '', false, true );
           }else{
+            //acivate
             $plugin_path = WP_Project_Init_Admin::get_plugin_path($plugin);
             if ( !is_plugin_active($plugin_path) ){
               activate_plugin( $plugin_path, '', false, true );
