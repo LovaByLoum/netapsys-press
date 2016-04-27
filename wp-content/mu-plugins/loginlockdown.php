@@ -116,7 +116,7 @@ function countFails($username = "") {
 	global $wpdb;
 	global $loginlockdownOptions;
 	$table_name = $wpdb->prefix . "login_fails";
-	$ip = loginlockdown_get_ip();
+	$ip = $_SERVER['REMOTE_ADDR'];
 	$class_c = substr ($ip, 0 , strrpos ( $ip, "." ));
 
 	$numFails = $wpdb->get_var("SELECT COUNT(login_attempt_ID) FROM $table_name " . 
@@ -130,7 +130,7 @@ function incrementFails($username = "") {
 	global $wpdb;
 	global $loginlockdownOptions;
 	$table_name = $wpdb->prefix . "login_fails";
-	$ip = loginlockdown_get_ip();
+	$ip = $_SERVER['REMOTE_ADDR'];
 
 	$username = sanitize_user($username);
 	$user = get_userdatabylogin($username);
@@ -145,7 +145,7 @@ function lockDown($username = "") {
 	global $wpdb;
 	global $loginlockdownOptions;
 	$table_name = $wpdb->prefix . "lockdowns";
-	$ip = loginlockdown_get_ip();
+	$ip = $_SERVER['REMOTE_ADDR'];
 
 	$username = sanitize_user($username);
 	$user = get_userdatabylogin($username);
@@ -160,7 +160,7 @@ function lockDown($username = "") {
 function isLockedDown() {
 	global $wpdb;
 	$table_name = $wpdb->prefix . "lockdowns";
-	$ip = loginlockdown_get_ip();
+	$ip = $_SERVER['REMOTE_ADDR'];
 	$class_c = substr ($ip, 0 , strrpos ( $ip, "." ));
 
 	$stillLocked = $wpdb->get_var("SELECT user_id FROM $table_name " . 
@@ -391,22 +391,5 @@ if ( isset($loginlockdown_db_version) ) {
 	endif;
 }
 
-function loginlockdown_get_ip() {
-//Just get the headers if we can or else use the SERVER global
-    if ( function_exists( 'apache_request_headers' ) ) {
-        $headers = apache_request_headers();
-    } else {
-        $headers = $_SERVER;
-    }
-//Get the forwarded IP if it exists
-    if ( array_key_exists( 'X-Forwarded-For', $headers ) && filter_var( $headers['X-Forwarded-For'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 ) ) {
-        $the_ip = $headers['X-Forwarded-For'];
-    } elseif ( array_key_exists( 'HTTP_X_FORWARDED_FOR', $headers ) && filter_var( $headers['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 )
-    ) {
-        $the_ip = $headers['HTTP_X_FORWARDED_FOR'];
-    } else {
-        $the_ip = filter_var( $_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 );
-    }
-    return $the_ip;
-}
+
 ?>
