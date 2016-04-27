@@ -13,7 +13,7 @@ function mytheme_init_actus(){
   //post type
   $labels = get_custom_post_type_labels( 'actualité', 'actualités', 1 );
   $data = array(
-    'capabilities'         => wp_get_custom_posts_capabilities('actualite'),
+    'capabilities'         => wp_get_custom_posts_capabilities('post'),
 		'supports'             => array( 'title', 'editor', 'thumbnail'),
 		'hierarchical'         => false,
 		'exclude_from_search'  => false,
