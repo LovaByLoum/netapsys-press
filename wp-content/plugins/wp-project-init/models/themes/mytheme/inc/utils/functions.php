@@ -74,14 +74,14 @@ if(!function_exists('wp_get_post_by_template')){
   /**
    * fonction qui recherche les posts par son template
    */
-  function wp_get_post_by_template($meta_value){
+  function wp_get_post_by_template($meta_value, $dir_page_template = 'page-templates/'){
     $args = array(
       'post_type' => 'page',
       'meta_key' => '_wp_page_template',
-      'meta_value' => $meta_value,
+      'meta_value' => $dir_page_template . $meta_value,
       'suppress_filters' => FALSE,
       'numberposts' => 1,
-      'fields' => 'ids'
+      //'fields' => 'ids'
     );
     $posts = get_posts($args);
     if(isset($posts) && !empty($posts)){
@@ -176,4 +176,65 @@ function get_custom_taxonomy_labels($taxsingle, $taxplural, $masculin){
     'menu_name'                  => ucfirst($taxplural),
   );
   return $labels;
+}
+
+//custom capabilities for post
+function wp_get_custom_posts_capabilities( $capability_type, $is_taxo = false ){
+  if ( $is_taxo ){
+    $caps =  array(
+      "manage_terms"        => "manage_{$capability_type}s",
+      "edit_terms"          => "edit_{$capability_type}s",
+      "delete_terms"        => "delete_{$capability_type}s",
+      "assign_terms"        => "assign_{$capability_type}s",
+    );
+  }else{
+    $caps =  array(
+      "edit_post"                   => "edit_{$capability_type}",
+      "edit_private_posts"          => "edit_private_{$capability_type}s",
+      "edit_published_posts"        => "edit_published_{$capability_type}s",
+      "delete_post"                 => "delete_{$capability_type}",
+      "delete_posts"                => "delete_{$capability_type}s",
+      "delete_private_posts"        => "delete_private_{$capability_type}s",
+      "delete_published_posts"      => "delete_published_{$capability_type}s",
+      "delete_others_posts"         => "delete_others_{$capability_type}s",
+      "edit_posts"                  => "edit_{$capability_type}s",
+      "edit_others_posts"           => "edit_others_{$capability_type}s",
+      "publish_posts"               => "publish_{$capability_type}s",
+      "read_private_posts"          => "read_private_{$capability_type}s",
+      "create_posts"                => "edit_{$capability_type}s",
+    );
+  }
+
+  //perform affichage dans Advanced Access Manager
+  if ( class_exists('mvb_WPAccess') ){
+    $keys = array_unique(array_values($caps));
+    $str = '';
+    foreach ( $keys as $v){
+      $str.="\$grouped_list['" . str_replace('_', ' ', ucfirst($capability_type)) . "'][]='$v';\n";
+    }
+
+    $str .=
+      "foreach( \$grouped_list['Miscelaneous'] as \$k => \$v ){
+          if ( in_array( \$v,  \$grouped_list['" . str_replace('_', ' ', ucfirst($capability_type)) . "'] ) ){
+        unset( \$grouped_list['Miscelaneous'][\$k] );
+      }
+  }\n";
+    $str.= 'return $grouped_list;';
+    $function = create_function('$grouped_list', $str );
+    add_filter('aam_grouped_list',  $function);
+  }
+
+  return $caps;
+}
+
+/*fonction d'encryptage*/
+function wp_encrypt_text($str){
+  $str = base64_encode($str);
+  return $str;
+}
+
+/*function de decryptage*/
+function wp_decrypt_text($str){
+  $str = base64_decode($str);
+  return $str;
 }

@@ -34,4 +34,9 @@ define ('FIELD_USER_ADRESSE', 'user_adresse');
 define ('FIELD_USER_VILLE', 'user_ville');
 define ('FIELD_USER_CP', 'user_cp');
 
+//user role
+define ('USER_PROFILE_MEMBRE', 'subscriber');
+define ('USER_PROFILE_WEBMASTER', 'webmaster');
+define ('USER_PROFILE_ADMIN', 'administrator');
+
 //....

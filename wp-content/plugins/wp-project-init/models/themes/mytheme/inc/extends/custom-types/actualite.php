@@ -11,9 +11,9 @@
 add_action('init', 'mytheme_init_actus', 1);
 function mytheme_init_actus(){
   //post type
-	  $labels = get_custom_post_type_labels( 'actualité', 'actualités', 1 );
-    $data = array(
-		'capability_type'      => 'post',
+  $labels = get_custom_post_type_labels( 'actualité', 'actualités', 1 );
+  $data = array(
+    'capabilities'         => wp_get_custom_posts_capabilities('actualite'),
 		'supports'             => array( 'title', 'editor', 'thumbnail'),
 		'hierarchical'         => false,
 		'exclude_from_search'  => false,

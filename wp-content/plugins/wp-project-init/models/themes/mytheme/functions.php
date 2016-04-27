@@ -70,6 +70,7 @@ function mytheme_setup() {
     require_once_files_in( get_template_directory() . '/inc/extends/custom-fields/acf' );
     require_once_files_in( get_template_directory() . '/inc/extends/custom-metaboxes' );
     require_once_files_in( get_template_directory() . '/inc/extends/custom-rules' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-role' );
     require_once_files_in( get_template_directory() . '/inc/extends/custom-mce-tools' );
     require_once_files_in( get_template_directory() . '/inc/extends/custom-shortcodes' );
     require_once_files_in( get_template_directory() . '/inc/extends/custom-sidebar' );
