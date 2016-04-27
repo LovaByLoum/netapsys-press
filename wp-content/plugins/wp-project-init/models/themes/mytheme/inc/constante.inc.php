@@ -39,4 +39,8 @@ define ('USER_PROFILE_MEMBRE', 'subscriber');
 define ('USER_PROFILE_WEBMASTER', 'webmaster');
 define ('USER_PROFILE_ADMIN', 'administrator');
 
+//image size
+define ('IMAGE_SIZE_ACTUS_VIGNETTE', 'actualite_vignette');
+define ('IMAGE_SIZE_ACTUS_MEDIUM', 'actualite_medium');
+
 //....
