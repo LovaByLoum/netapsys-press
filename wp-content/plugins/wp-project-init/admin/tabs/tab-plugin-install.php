@@ -67,7 +67,7 @@ if(!empty($message)):?>
           </tr>
           <?php foreach ( $plugins as $plugin ):
             //check api
-            /*$api = plugins_api('plugin_information', array('slug' => $plugin, 'fields' => array('sections' => false) ) ); //Save on a bit of bandwidth.
+            /*$api = plugins_api('plugin_information', array('slug' => $plugin, 'fields' => array('sections' => false) ) );
             $name = $api->name;
             $version = 'Version ' . $api->version;
             $download = $api->download_link;

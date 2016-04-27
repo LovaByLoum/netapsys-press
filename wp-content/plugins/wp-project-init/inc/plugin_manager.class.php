@@ -26,6 +26,9 @@ class WP_Plugin_Manager{
 	}
 
   public function install_plugins(){
+    include_once ABSPATH . 'wp-admin/includes/plugin-install.php'; //for plugins_api..
+    include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
+
     if (isset($this->data->plugin) && !empty($this->data->plugin)){
       $plugins_to_activate = array_keys($this->data->plugin);
       if ( isset( $this->data->type_profil ) ){
@@ -42,6 +45,25 @@ class WP_Plugin_Manager{
         if ( !empty($filename) && !empty($plugins_to_activate)){
           $content = implode("\n", $plugins_to_activate) . "\n";
           self::write_file( WPI_PROFILES_PATH . $filename,  $content, 'w'  );
+        }
+      }
+
+      //activate
+      if ( !empty($plugins_to_activate) ){
+        foreach ( $plugins_to_activate as $plugin ){
+          $plugin = trim($plugin);
+          if ( !is_dir( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $plugin) ){
+            $api = plugins_api('plugin_information', array('slug' => $plugin, 'fields' => array('sections' => false) ) );
+            $upgrader = new Plugin_Upgrader( new Plugin_Installer_Skin( compact('title', 'url', 'nonce', 'plugin', 'api') ) );
+            $upgrader->install($api->download_link);
+            $plugin_path = WP_Project_Init_Admin::get_plugin_path($plugin);
+            activate_plugin( $plugin_path, '', false, true );
+          }else{
+            $plugin_path = WP_Project_Init_Admin::get_plugin_path($plugin);
+            if ( !is_plugin_active($plugin_path) ){
+              activate_plugin( $plugin_path, '', false, true );
+            }
+          }
         }
       }
 
