@@ -40,6 +40,7 @@
  */
 
 require_once( get_template_directory() . '/inc/constante.inc.php' );
+require_once( get_template_directory() . '/inc/default.config.php' );
 require_once( get_template_directory() . '/inc/utils/functions.php' );
 require_once( get_template_directory() . '/login.php' );
 
@@ -56,6 +57,11 @@ if (is_admin()){
     require get_template_directory() . '/theme-options/theme-options.php';
   }
 }
+
+//lib
+require_once( get_template_directory() . '/lib/cssmin.php' );
+require_once( get_template_directory()  . '/lib/jsmin.php' );
+
 global $mytheme_options;
 $mytheme_options = get_option( 'mytheme_theme_options' );
 

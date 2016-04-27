@@ -11,7 +11,7 @@
 
 if(!function_exists('mp')){
   /**
-   * Fonction pour debugger.
+   * Fonction pour debugger (message privé).
    *
    * @param type $var
    * @param type $t
@@ -24,6 +24,84 @@ if(!function_exists('mp')){
       print('</pre>');
       if($t == true)
         die();
+    }
+  }
+}
+
+if(!function_exists('wp_log')){
+  /**
+   * créer un fichier log personnalisé dans wp-content/logs
+   */
+  function wp_log($data){
+    $uploadir = wp_upload_dir();
+    $path_log = ABSPATH .'logs';
+    @mkdir($path_log);
+    $path_log.= '/logs/wp.log';
+    if(is_array($data) ||is_object($data) ){
+      ob_start();
+      print_r($data);
+      $str = ob_get_contents();
+      ob_clean();
+    }else{
+      $str = $data;
+    }
+    $str = date('Y-m-d H:i:s') . '     ' . $str;
+    $str .= "$str\r\n";
+    wp_create_file($path_log,$str,'a');
+  }
+  /**
+   * creer un fichier et insere un contenu
+   *
+   * @param string $filename
+   * @param string $somecontent
+   * @return bool
+   */
+  function wp_create_file($filename, $somecontent, $openmode = "w"){
+    if (!$handle = @fopen($filename, $openmode)) {
+      return false;
+    }
+    if (@fwrite($handle, $somecontent) === FALSE) {
+      return false;
+    }
+    @fclose($handle);
+    return true;
+  }
+}
+
+if(!function_exists('wp_minify')){
+  //minification des ressources
+  function wp_minify($array_file, $type){
+    $file = 'mytheme';
+    $minified = get_template_directory_uri() . '/' . $type .'/' . $file . '.min.' . $type ;
+    $minifiedpath = get_template_directory() . '/' . $type .'/' . $file . '.min.' . $type ;
+
+    if (is_file($minifiedpath)){
+      return $minified;
+    }else{
+      $result = '';
+      foreach($array_file as $key => $value) {
+        if ($type == 'css'){
+          if( $value ){
+            $result .= "\n" . CssMin::minify(file_get_contents(get_template_directory_uri(). '/' . $type. '/'.$key. '.'.$type));
+          }
+          else {
+            $result .= "\n" . file_get_contents(get_template_directory_uri(). '/' . $type. '/'.$key. '.'.$key);
+          }
+        }else{
+          if( $value ){
+            $result .= "\n" . JSMin::minify(file_get_contents(get_template_directory_uri(). '/' . $type. '/'.$key. '.'.$type));
+          }else{
+            $result .= "\n" . file_get_contents(get_template_directory_uri(). '/' . $type. '/'.$key. '.'.$type);
+          }
+        }
+      }
+
+      if ($type == 'css'){
+        $result=str_replace('@charset "utf-8";', '', $result);
+        $result = '@charset "utf-8";' . $result;
+      }
+      wp_create_file($minifiedpath,$result);
+      return $minified;
     }
   }
 }
@@ -238,3 +316,4 @@ function wp_decrypt_text($str){
   $str = base64_decode($str);
   return $str;
 }
+

@@ -7,6 +7,7 @@ class WP_Project_Init_Admin{
 	static $_tabs = array(
 	    'generate-themes' => 'Generateur de thème',
 	    'plugin-install' => 'Plugin de base',
+	    'plugin-secure' => 'Must Use Plugin et Sécurisation',
 	);
 	static $_required = array();
 	static $_error = array();
