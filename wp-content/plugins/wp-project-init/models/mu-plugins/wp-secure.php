@@ -3,7 +3,7 @@
 * Plugin Name: Wordpress secure
 * Description: Met en place toutes les régles de sécurité pour WordPress
 * Version: 1.0
-* Author: Johary
+* Author: Johary Ranarimanana
 */
 
 class Wordpress_Secure

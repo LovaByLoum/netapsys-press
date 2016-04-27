@@ -25,16 +25,28 @@ if(!empty($message)):?>
         <p><?php echo $message;?></p>
     </div>
 <?php endif;?>
-<form class="wpi-form wpi-form<?php echo rand(1,12);?>" method="post" action="" enctype="multipart/form-data">
-    <table class="form-table">
-        <tbody>
-            <tr>
-                <th scope="row">Nom de votre theme</th>
-                <td>
-                	<?php WP_Project_Init_Admin::render_fields('text','theme_name','Le nom qui apparaitra dans la liste des thèmes');?>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <p class="submit"><input type="submit" name="<?php echo $current_tab;?>" id="submit" class="button button-primary" value="Generer"></p>
+<form class="wpi-form wpi-form<?php echo rand(1,12);?>" method="post" action="" enctype="multipart/form-data" style="min-height: 600px;">
+  <table class="form-table">
+    <tbody>
+    <tr>
+      <th scope="row">Login Captcha</th>
+      <td>
+        <?php WP_Project_Init_Admin::render_fields('checkbox','mu_captcha',false,'Activer le captcha sur le login form');?>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Login lock down</th>
+      <td>
+        <?php WP_Project_Init_Admin::render_fields('checkbox','mu_lock',false,'Activer le loginlock down sur le login form.<br>Bloque les Ips des utilisateurs ayant fait plusieurs tentatives de login infructueuses pendant un laps de temps configurable.');?>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">WP Secure</th>
+      <td>
+        <?php WP_Project_Init_Admin::render_fields('checkbox','mu_secure',false,'Activer divers scripts de sécurisation');?>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <p class="submit"><input type="submit" name="<?php echo $current_tab;?>" id="submit" class="button button-primary" value="Activer"></p>
 </form>

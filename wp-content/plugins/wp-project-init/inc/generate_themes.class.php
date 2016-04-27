@@ -37,8 +37,8 @@ class WP_Generate_Themes{
 		$msg='Votre thème a été generé : <a target="__blank" href="' . site_url('wp-admin/themes.php').'">Voir</a> ou <a href="' . site_url('wp-admin/') . '?action=export_theme&theme=' . $this->data->theme_slug . '&nonce=' . $nonce_export . '">Exporter</a>';
 		return $msg;
 	}
-	
-	public function copy_theme_dir($path,$dest){
+
+  public function copy_theme_dir($path,$dest){
 		$msg = '';
 		$nodes = glob($path . '/*');
 	    foreach ($nodes as $node) {
