@@ -92,7 +92,11 @@ class WP_Project_Init_Admin{
 	
 	//process submission theme option form
 	public static function process_plugin_install(){
-		return 'ohlali';
+    $postdata = $_POST;
+    $plug_manager = new WP_Plugin_Manager($postdata);
+    $msg = $plug_manager->install_plugins();
+
+		return $msg;
 	}
 
   //process submission theme option form
@@ -118,5 +122,18 @@ class WP_Project_Init_Admin{
 		}
 		return $msg;		
 	}
+
+  public static function get_plugin_path( $plugin ){
+    $plugins = get_plugins();
+    $plugins = array_keys($plugins);
+
+    foreach($plugins as $plugin_path){
+      if(strpos($plugin_path, $plugin.'/') === 0) {
+        return $plugin_path;
+        break;
+      }
+    }
+    return false;
+  }
 	
 }

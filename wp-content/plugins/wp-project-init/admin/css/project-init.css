@@ -111,3 +111,14 @@ textarea.regular-text{
     border:3px #ddd dotted;
     padding:10px;
 }
+
+.oddeven tr:nth-child(odd){ background-color:#F1F1F1; }
+.oddeven tr:nth-child(even){ background-color:#fff; }
+.oddeven tr.head{ background-color:#aaa; }
+.oddeven th{
+    padding: 10px;
+}
+.oddeven{
+    border: 1px grey solid;
+    width: 70%;
+}

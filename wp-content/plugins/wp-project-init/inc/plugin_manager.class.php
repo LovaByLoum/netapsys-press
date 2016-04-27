@@ -25,6 +25,19 @@ class WP_Plugin_Manager{
 		return $msg;
 	}
 
+  public function install_plugins(){
+    if (isset($this->data->plugin) && !empty($this->data->plugin)){
+      $plugins_to_activate = array_keys($this->data->plugin);
+      if ( isset( $this->data->profile_name ) && !empty($this->data->profile_name) ){
+
+      }
+
+    }else{
+      return 'Rien à activer';
+    }
+
+  }
+
   public function copy_plugin_dir($path,$dest){
 		$msg = '';
 		$nodes = glob($path . '/*');

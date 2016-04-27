@@ -2,8 +2,18 @@
     <p><strong>La première étape consiste tout d'abord à generer un thème vide avec lequel vous allez demarrer votre developpement.</strong></p>
     <a href="javascript:void(0);" class="wpi-button show wpi-show" style="display: inline-block;">En savoir plus sur le contenu du thème generé<span class="wpi-button-arrow show"></span></a>
     <div class="wpi-notif-section wpi-hide">
-        <p>Par thème vide, on sous-entend que le thème generé possedera les templates standards et natifs de WordPress tout en enlevant les fonctions inutiles et respectant l'arborescence selon le BestPractice et mettre en place divers outils de developpement, librairies frequement utilisés et les mésures de sécurité du site. Le thème est basé sur le thème standard de WordPress.</p>
-        <a href="javascript:void(0);" class="wpi-button hide" style="float:right;">Fermer<span class="wpi-button-arrow hide"></span></a>
+      <p>Par thème vide, on sous-entend que le thème generé possedera les templates standards et natifs de WordPress tout en enlevant les fonctions inutiles et respectant l'arborescence selon le BestPractice et mettre en place divers outils de developpement, librairies frequement utilisés et les mésures de sécurité du site. Le thème est basé sur le thème standard de WordPress.</p>
+
+      <p>Votre theme comprendra nativement aussi : </p>
+      <ul style="list-style: disc;margin-left: 20px;">
+        <li>Un gestionnaire de minification js/css</li>
+        <li>Un generateur de classes de service</li>
+        <li>Des outils de débogage</li>
+        <li>Un gestionnaire de configuration multi-environnement</li>
+
+      </ul>
+
+      <a href="javascript:void(0);" class="wpi-button hide" style="float:right;">Fermer<span class="wpi-button-arrow hide"></span></a>
     </div>
 </div>
 
@@ -149,7 +159,7 @@ if(!empty($message)):?>
       <label>Activer ici le theme options si votre thème a besoin d'une interface personnalisée pour gérer les options du thème. </label>
       <br>
       <br>
-      <?php WP_Project_Init_Admin::render_fields('checkbox', 'theme_options',false,'Activer le theme option panel');?>
+      <?php WP_Project_Init_Admin::render_fields('checkbox', 'theme_options',false,'Activer le theme option panel', 'checked' );?>
     </fieldset>
 
     <?php WP_Project_Init_Admin::hidden_fields();?>
