@@ -20,8 +20,6 @@ class Wordpress_Utils
 		add_filter('tiny_mce_before_init', array($this,'wpu_tiny_mce_before_init'),10,2);
 
 		//favicon et admin logo
-		add_action('wp_head', array($this,'wpu_favicon'));
-		add_action('admin_head', array($this,'wpu_favicon'));
 		//add_filter('login_headerurl', array($this,'wpu_custom_login_headerurl'));
 		//add_filter('login_headertitle', array($this,'wpu_custom_login_headertitle'));
 		/*
