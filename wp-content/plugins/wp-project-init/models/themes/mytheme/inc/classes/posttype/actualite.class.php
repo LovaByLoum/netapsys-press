@@ -1,4 +1,13 @@
-<?php 
+<?php
+/**
+ * classe de service pour le type de post actualite
+ *
+ * @package WordPress
+ * @subpackage mytheme
+ * @since mytheme __WPI__THEME__VERSION__
+ * @author : __WPI__THEME__AUTHOR__
+ */
+
 class CActualite {
 
   private static $_elements;

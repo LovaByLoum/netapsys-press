@@ -1,4 +1,13 @@
-<?php 
+<?php
+/**
+ * classe de service pour la taxonomie type actus
+ *
+ * @package WordPress
+ * @subpackage mytheme
+ * @since mytheme __WPI__THEME__VERSION__
+ * @author : __WPI__THEME__AUTHOR__
+ */
+
 class CTypeActus {
 
   private static $_elements;

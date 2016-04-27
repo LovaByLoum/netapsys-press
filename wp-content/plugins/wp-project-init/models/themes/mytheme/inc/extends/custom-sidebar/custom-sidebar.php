@@ -1,8 +1,11 @@
 <?php
 /**
- * Register our sidebars and widgetized areas.
+ * Initialisation des custom sidebars
  *
- * @since mytheme 1.0
+ * @package WordPress
+ * @subpackage mytheme
+ * @since mytheme __WPI__THEME__VERSION__
+ * @author : __WPI__THEME__AUTHOR__
  */
 function mytheme_widgets_init() {
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * fonctions utilitaires pour l'interface admin
+ * fonctions personnalistion de l'interface admin
  * @package WordPress
  * @subpackage mytheme
  * @since mytheme __WPI__THEME__VERSION__

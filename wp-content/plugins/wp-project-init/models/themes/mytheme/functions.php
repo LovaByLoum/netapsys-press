@@ -67,7 +67,8 @@ function mytheme_setup() {
     require_once_files_in( get_template_directory() . '/inc/extends/custom-mce-tools' );
     require_once_files_in( get_template_directory() . '/inc/extends/custom-shortcodes' );
     require_once_files_in( get_template_directory() . '/inc/extends/custom-sidebar' );
-    require_once_files_in( get_template_directory() . '/inc/extends/custom-types-taxo' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-types' );
+    require_once_files_in( get_template_directory() . '/inc/extends/custom-taxonomies' );
     require_once_files_in( get_template_directory() . '/inc/extends/custom-widgets' );
 
 	/* Make mytheme available for translation.
@@ -93,115 +94,3 @@ function mytheme_setup() {
 
 }
 endif; // mytheme_setup
-
-/**
- * Sets the post excerpt length to 40 words.
- *
- * To override this length in a child theme, remove the filter and add your own
- * function tied to the excerpt_length filter hook.
- */
-function mytheme_excerpt_length( $length ) {
-	return 40;
-}
-add_filter( 'excerpt_length', 'mytheme_excerpt_length' );
-
-/**
- * Returns a "Continue Reading" link for excerpts
- */
-function mytheme_continue_reading_link() {
-	return ' <a href="'. esc_url( get_permalink() ) . '">' . __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'mytheme' ) . '</a>';
-}
-
-/**
- * Replaces "[...]" (appended to automatically generated excerpts) with an ellipsis and mytheme_continue_reading_link().
- *
- * To override this in a child theme, remove the filter and add your own
- * function tied to the excerpt_more filter hook.
- */
-function mytheme_auto_excerpt_more( $more ) {
-	return ' &hellip;' . mytheme_continue_reading_link();
-}
-add_filter( 'excerpt_more', 'mytheme_auto_excerpt_more' );
-
-/**
- * Adds a pretty "Continue Reading" link to custom post excerpts.
- *
- * To override this link in a child theme, remove the filter and add your own
- * function tied to the get_the_excerpt filter hook.
- */
-function mytheme_custom_excerpt_more( $output ) {
-	if ( has_excerpt() && ! is_attachment() ) {
-		$output .= mytheme_continue_reading_link();
-	}
-	return $output;
-}
-add_filter( 'get_the_excerpt', 'mytheme_custom_excerpt_more' );
-
-if ( ! function_exists( 'mytheme_comment' ) ) :
-/**
- * Template for comments and pingbacks.
- *
- * To override this walker in a child theme without modifying the comments template
- * simply create your own mytheme_comment(), and that function will be used instead.
- *
- * Used as a callback by wp_list_comments() for displaying the comments.
- *
- * @since mytheme 1.0
- */
-function mytheme_comment( $comment, $args, $depth ) {
-	$GLOBALS['comment'] = $comment;
-	switch ( $comment->comment_type ) :
-		case 'pingback' :
-		case 'trackback' :
-	?>
-	<li class="post pingback">
-		<p><?php _e( 'Pingback:', 'mytheme' ); ?> <?php comment_author_link(); ?><?php edit_comment_link( __( 'Edit', 'mytheme' ), '<span class="edit-link">', '</span>' ); ?></p>
-	<?php
-			break;
-		default :
-	?>
-	<li <?php comment_class(); ?> id="li-comment-<?php comment_ID(); ?>">
-		<article id="comment-<?php comment_ID(); ?>" class="comment">
-			<footer class="comment-meta">
-				<div class="comment-author vcard">
-					<?php
-						$avatar_size = 68;
-						if ( '0' != $comment->comment_parent )
-							$avatar_size = 39;
-
-						echo get_avatar( $comment, $avatar_size );
-
-						/* translators: 1: comment author, 2: date and time */
-						printf( __( '%1$s on %2$s <span class="says">said:</span>', 'mytheme' ),
-							sprintf( '<span class="fn">%s</span>', get_comment_author_link() ),
-							sprintf( '<a href="%1$s"><time pubdate datetime="%2$s">%3$s</time></a>',
-								esc_url( get_comment_link( $comment->comment_ID ) ),
-								get_comment_time( 'c' ),
-								/* translators: 1: date, 2: time */
-								sprintf( __( '%1$s at %2$s', 'mytheme' ), get_comment_date(), get_comment_time() )
-							)
-						);
-					?>
-
-					<?php edit_comment_link( __( 'Edit', 'mytheme' ), '<span class="edit-link">', '</span>' ); ?>
-				</div><!-- .comment-author .vcard -->
-
-				<?php if ( $comment->comment_approved == '0' ) : ?>
-					<em class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.', 'mytheme' ); ?></em>
-					<br />
-				<?php endif; ?>
-
-			</footer>
-
-			<div class="comment-content"><?php comment_text(); ?></div>
-
-			<div class="reply">
-				<?php comment_reply_link( array_merge( $args, array( 'reply_text' => __( 'Reply <span>&darr;</span>', 'mytheme' ), 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
-			</div><!-- .reply -->
-		</article><!-- #comment-## -->
-
-	<?php
-			break;
-	endswitch;
-}
-endif; // ends check for mytheme_comment()

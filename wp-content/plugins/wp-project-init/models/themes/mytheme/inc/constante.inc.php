@@ -3,9 +3,9 @@
  * Definir ici les constantes applicatives
  *
  * Essayez de bien organiser la declaration des constantes :
- * * en regroupant les mêmes types de constantes
- * * en prefixant les mêmes types de constantes
- * * et en mettant des commentaires
+ * en regroupant les mêmes types de constantes
+ * en prefixant les mêmes types de constantes
+ * et en mettant des commentaires
  *
  * @package WordPress
  * @subpackage mytheme

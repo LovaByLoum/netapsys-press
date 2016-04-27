@@ -2,7 +2,7 @@
 /**
  * Options du theme
  *
- * ajouter ici les options du themes
+ * ajouter/modifier ici les options du themes
  */
 
 global $mytheme_options_settings;

@@ -72,7 +72,7 @@ if(!function_exists('wp_limite_word')){
 
 if(!function_exists('wp_get_post_by_template')){
   /**
-   * fonction qui retourne l'ID du post par son template
+   * fonction qui recherche les posts par son template
    */
   function wp_get_post_by_template($meta_value){
     $args = array(
@@ -94,6 +94,7 @@ if(!function_exists('wp_get_post_by_template')){
 }
 
 if (!function_exists('get_post_by_slug')) :
+  //fonction recherchant les post par slug
   function get_post_by_slug($slug, $pt, $pages = false)
   {
     if (empty($slug))
@@ -111,7 +112,7 @@ if (!function_exists('get_post_by_slug')) :
   }
 endif;
 
-
+//requiert tous les fichiers d'un dossier
 function require_once_files_in($path){
   if ( is_dir($path) ){
     $nodes = glob($path . '/*.php');

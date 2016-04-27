@@ -1,4 +1,12 @@
-<?php 
+<?php
+/**
+ * classe de service pour les users
+ *
+ * @package WordPress
+ * @subpackage mytheme
+ * @since mytheme __WPI__THEME__VERSION__
+ * @author : __WPI__THEME__AUTHOR__
+ */
 class CUser {
 
   private static $_elements;
