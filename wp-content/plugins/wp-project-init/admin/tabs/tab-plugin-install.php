@@ -15,14 +15,44 @@ if(!empty($message)):?>
     </div>
 <?php endif;?>
 <form class="wpi-form  wpi-form<?php echo rand(1,12);?>" method="post" action="" enctype="multipart/form-data">
-    <?php global $wppi_plugins;?>
+    <?php global $wppi_plugins;
+    $type_profile_choice = isset($_REQUEST['type_profile']) ? $_REQUEST['type_profile'] : 1;
+    $selected_profile = isset($_REQUEST['profile']) ? $_REQUEST['profile'] : '';
+    $plugins_to_active = array();
+    if ( !empty($selected_profile) ){
+      $plugins_to_active = WP_Plugin_Manager::get_profile($selected_profile);
+    }
+
+    ?>
 
     <table class="form-table">
       <tbody>
       <tr>
+        <td colspan="2">
+          <label><input  type="radio" value="1" name="type_profil" <?php if ( $type_profile_choice == 1):?>checked<?php endif;?>> Nouveau profil</label><br>
+          <label><input  type="radio" value="2" name="type_profil" <?php if ( $type_profile_choice == 2):?>checked<?php endif;?>> Charger un profil existant</label>
+        </td>
+      </tr>
+      <tr id="type_profil2" class="type_profil_choice" <?php if ( $type_profile_choice != 2):?>style="display:none;"<?php endif;?>>
+        <th scope="row">Charger le profil</th>
+        <td>
+          <?php
+          $nodes = glob(WPI_PROFILES_PATH . '*.profile');
+          ?>
+          <select id="loadprofile" name="profile_file">
+            <option>Sélectionner</option>
+            <?php foreach ( $nodes as $node ):
+              $pi = pathinfo($node);
+              ?>
+            <option value="<?php echo $pi['basename'];?>" <?php if( $selected_profile == $pi['basename'] ):?>selected<?php endif;?>><?php echo $pi['basename'];?></option>
+            <?php endforeach;?>
+          </select>
+        </td>
+      </tr>
+      <tr id="type_profil1" class="type_profil_choice" <?php if ( $type_profile_choice != 1):?>style="display:none;"<?php endif;?>>
         <th scope="row">Nom du profil</th>
         <td>
-          <?php WP_Project_Init_Admin::render_fields('text','profile_name', '');?>
+          <input class="regular-text " type="text" value="" name="profile_name"><br>
           <em>Enregistrer la sélection dans ce profil</em>
         </td>
       </tr>
@@ -52,7 +82,7 @@ if(!empty($message)):?>
             <td style="width:70%">
               <?php
               if ( !is_plugin_active(WP_Project_Init_Admin::get_plugin_path($plugin)) ){
-                WP_Project_Init_Admin::render_fields('checkbox', 'plugin[' . $plugin . ']', false, $name);
+                WP_Project_Init_Admin::render_fields('checkbox', 'plugin[' . $plugin . ']', false, $name, (in_array($plugin, $plugins_to_active) ? 'checked' : '' ) );
               }else{
                 echo '<input type="checkbox" disabled> ' . $plugin;
               }

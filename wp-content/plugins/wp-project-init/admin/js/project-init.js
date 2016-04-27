@@ -16,4 +16,15 @@ jQuery(function(){
             }
         });
     }
+
+    jQuery('[name=type_profil]').change(function(){
+        jQuery('.type_profil_choice').hide();
+        jQuery('#type_profil' + jQuery(this).val()).show();
+    })
+
+    jQuery('#loadprofile').change(function(){
+        if (jQuery(this).val() != ''){
+            window.location.href = window.location.href + '&profile=' + jQuery(this).val() + '&type_profile='+jQuery('[name=type_profil]:checked').val();
+        }
+    })
 });

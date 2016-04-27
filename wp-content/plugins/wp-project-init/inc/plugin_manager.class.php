@@ -28,8 +28,21 @@ class WP_Plugin_Manager{
   public function install_plugins(){
     if (isset($this->data->plugin) && !empty($this->data->plugin)){
       $plugins_to_activate = array_keys($this->data->plugin);
-      if ( isset( $this->data->profile_name ) && !empty($this->data->profile_name) ){
-
+      if ( isset( $this->data->type_profil ) ){
+        $filename = '';
+        if ( $this->data->type_profil == 1 ){
+          if (isset($this->data->profile_name) && !empty($this->data->profile_name)){
+            $filename = sanitize_title($this->data->profile_name) . '.profile';
+          }
+        }else if( $this->data->type_profil == 2 ){
+          if (isset($this->data->profile_file) && !empty($this->data->profile_file)){
+            $filename = $this->data->profile_file;
+          }
+        }
+        if ( !empty($filename) && !empty($plugins_to_activate)){
+          $content = implode("\n", $plugins_to_activate) . "\n";
+          self::write_file( WPI_PROFILES_PATH . $filename,  $content, 'w'  );
+        }
       }
 
     }else{
@@ -99,5 +112,21 @@ class WP_Plugin_Manager{
     return true;
   }
 
+  public static function get_profile( $file ){
+    $result = file_get_contents( WPI_PROFILES_PATH . $file );
+    $array = explode("\n", $result);
+    $array = array_filter($array);
+    return $array;
+  }
 
+  public static function write_file($filename, $somecontent, $openmode = "a"){
+    if (!$handle = @fopen($filename, $openmode)) {
+      return false;
+    }
+    if (@fwrite($handle, $somecontent) === FALSE) {
+      return false;
+    }
+    @fclose($handle);
+    return true;
+  }
 }
