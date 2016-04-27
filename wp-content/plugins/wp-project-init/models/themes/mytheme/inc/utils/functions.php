@@ -32,11 +32,10 @@ if(!function_exists('wp_log')){
   /**
    * créer un fichier log personnalisé dans wp-content/logs
    */
-  function wp_log($data){
-    $uploadir = wp_upload_dir();
+  function wp_log( $data ){
     $path_log = ABSPATH .'logs';
     @mkdir($path_log);
-    $path_log.= '/logs/wp.log';
+    $path_log.= '/wp.log';
     if(is_array($data) ||is_object($data) ){
       ob_start();
       print_r($data);
@@ -45,9 +44,8 @@ if(!function_exists('wp_log')){
     }else{
       $str = $data;
     }
-    $str = date('Y-m-d H:i:s') . '     ' . $str;
-    $str .= "$str\r\n";
-    wp_create_file($path_log,$str,'a');
+    $str = date('Y-m-d H:i:s') . '     ' . $str . "\r\n";
+    wp_create_file($path_log, $str,'a');
   }
   /**
    * creer un fichier et insere un contenu
