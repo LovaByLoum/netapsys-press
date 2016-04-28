@@ -10,8 +10,6 @@ $wppi_plugins = array(
     'advanced-custom-fields',
     'wck-custom-fields-and-custom-post-types-creator',
     'types',
-    'acf-repeater',
-    'acf-gallery',
     'advanced-custom-fields-taxonomy-field-add-on',
     'acf-field-date-time-picker',
 
@@ -77,12 +75,7 @@ $wppi_plugins = array(
 
   ),
   'Multilingue' => array(
-    'sitepress-multilingual-cms',
-    'wpml-string-translation',
-    'wpml-cms-nav',
-    'wpml-translation-management',
     'multisite-language-switcher',
-
   ),
   'Formulaires' => array(
     'wordpress-form-manager',
