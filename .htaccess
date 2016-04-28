@@ -24,13 +24,7 @@ SetEnvIf HOST "preprod[.]netapsys-press[.]netapsys[.]fr" !SERVER_ENV_LOCAL !SERV
 SetEnvIf HOST "netapsys-press[.]netapsys[.]fr" !SERVER_ENV_LOCAL !SERVER_ENV_RECETTE !SERVER_ENV_PREPROD SERVER_ENV_PROD
 SetEnvIf HOST "www[.]netapsys-press[.]netapsys[.]fr" !SERVER_ENV_LOCAL !SERVER_ENV_RECETTE !SERVER_ENV_PREPROD SERVER_ENV_PROD
 
-require pass and login
-AuthUserFile /var/www/html/.htpasswd
-AuthGroupFile /dev/null
-AuthName "Acces securise"
-AuthType Basic
-Require valid-user
- 
+
 Order deny,allow
 deny from all
 allow from env=SERVER_ENV_LOCAL
@@ -38,6 +32,13 @@ allow from env=SERVER_ENV_RECETTE
 allow from env=SERVER_ENV_PREPROD
 allow from env=SERVER_ENV_PROD
 Satisfy any
+
+#require pass and login
+AuthUserFile /var/www/html/.htpasswd
+AuthGroupFile /dev/null
+AuthName "Acces securise"
+AuthType Basic
+Require valid-user
 
 # Repertoire virtuel de Base differente par environnement pour la reecriture d'URL
 
