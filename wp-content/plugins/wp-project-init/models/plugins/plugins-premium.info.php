@@ -4,7 +4,7 @@
  */
 
 global $wppi_plugins_premium;
-define ("WPPI_PLUGIN_PREMIUM_BASE_URL", 'http://localhost/projets/netapsys-press/srcs/wp-content/paying-plugins/');
+define ("WPPI_PLUGIN_PREMIUM_BASE_URL", 'http://netapsys:N6ct2K3x@netapsys-press.netapsys.fr/wp-content/paying-plugins/');
 
 $wppi_plugins_premium = array(
   'Structure et Champs personnalisés' => array(

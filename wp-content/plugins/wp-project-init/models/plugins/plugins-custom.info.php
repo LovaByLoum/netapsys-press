@@ -4,7 +4,7 @@
  */
 
 global $wppi_plugins_custom;
-define ("WPPI_PLUGIN_CUSTOM_BASE_URL", 'http://localhost/projets/netapsys-press/srcs/wp-content/plugins/');
+define ("WPPI_PLUGIN_CUSTOM_BASE_URL", 'http://netapsys:N6ct2K3x@netapsys-press.netapsys.fr/wp-content/plugins/');
 
 $wppi_plugins_custom = array(
   'Structure et Champs personnalisés' => array(

@@ -24,12 +24,12 @@ SetEnvIf HOST "preprod[.]netapsys-press[.]netapsys[.]fr" !SERVER_ENV_LOCAL !SERV
 SetEnvIf HOST "netapsys-press[.]netapsys[.]fr" !SERVER_ENV_LOCAL !SERVER_ENV_RECETTE !SERVER_ENV_PREPROD SERVER_ENV_PROD
 SetEnvIf HOST "www[.]netapsys-press[.]netapsys[.]fr" !SERVER_ENV_LOCAL !SERVER_ENV_RECETTE !SERVER_ENV_PREPROD SERVER_ENV_PROD
 
-#require pass and login
-#AuthUserFile /var/www/html/.htpasswd
-#AuthGroupFile /dev/null
-#AuthName "Acces securise"
-#AuthType Basic
-#Require valid-user
+require pass and login
+AuthUserFile /var/www/html/.htpasswd
+AuthGroupFile /dev/null
+AuthName "Acces securise"
+AuthType Basic
+Require valid-user
  
 Order deny,allow
 deny from all
