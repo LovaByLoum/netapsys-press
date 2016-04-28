@@ -15,6 +15,7 @@ $wppi_plugins_premium = array(
     'acf-options-page',
   ),
   'Multilingue' => array(
+    'sitepress-multilingual-cms',
     'gravityforms-multilingual',
     'shopp-multilingual',
     'wp-e-commerce-multilingual',
