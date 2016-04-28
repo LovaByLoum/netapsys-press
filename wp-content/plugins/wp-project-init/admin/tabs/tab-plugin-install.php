@@ -81,11 +81,7 @@ if(!empty($message)):?>
           <tr>
             <td style="width:70%">
               <?php
-              if ( !is_plugin_active(WP_Project_Init_Admin::get_plugin_path($plugin)) ){
-                WP_Project_Init_Admin::render_fields('checkbox', 'plugin[' . $plugin . ']', false, $name, (in_array($plugin, $plugins_to_active) ? 'checked' : '' ) );
-              }else{
-                echo '<input type="checkbox" disabled> ' . $plugin;
-              }
+              WP_Project_Init_Admin::render_fields('checkbox', 'plugin[' . $plugin . ']', false, $name, (in_array($plugin, $plugins_to_active) ? 'checked' : '' ) );
               ?>
               <em><?php echo $version;?></em>
             </td>
