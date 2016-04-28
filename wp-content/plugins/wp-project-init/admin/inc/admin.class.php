@@ -8,6 +8,7 @@ class WP_Project_Init_Admin{
 	    'generate-themes' => 'Generateur de thème',
 	    'plugin-install' => 'Plugins de base',
 	    'plugin-custom-install' => 'Plugins Custom',
+	    'plugin-premium-install' => 'Plugins Payants',
 	    'plugin-secure' => 'Must Use Plugin et Sécurisation',
 	);
 	static $_required = array();

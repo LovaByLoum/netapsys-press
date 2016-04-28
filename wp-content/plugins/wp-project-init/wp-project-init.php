@@ -11,6 +11,7 @@ require_once('inc/generate_themes.class.php');
 require_once('inc/plugin_manager.class.php');
 require_once('models/plugins/plugins.info.php');
 require_once('models/plugins/plugins-custom.info.php');
+require_once('models/plugins/plugins-premium.info.php');
 require_once('inc/zipper.php');
 
 class WP_Project_Init{
@@ -80,6 +81,32 @@ class WP_Project_Init{
       check_admin_referer('wppi-install-custom-plugin_' . $plugin);
       if ( defined('WPPI_PLUGIN_CUSTOM_BASE_URL') ){
         $url = WPPI_PLUGIN_CUSTOM_BASE_URL . $plugin . '.zip';
+        $newfile = 'tmp_file.zip';
+        if (!copy($url, $newfile)) {
+          wp_die ("failed to copy $url...");
+        }
+        $zip = new ZipArchive;
+        if ($zip->open($newfile) === TRUE) {
+          $zip->extractTo(WP_PLUGIN_DIR  );
+          $zip->close();
+
+          //acivate
+          $plugin_path = WP_Project_Init_Admin::get_plugin_path($plugin);
+          activate_plugin( $plugin_path, '', false, true );
+          wp_redirect( site_url("wp-admin/plugins.php") );
+        } else {
+          wp_die ("failed to open $newfile ...");
+        }
+      }
+
+
+    }
+
+    if ( isset($_REQUEST['action']) && 'wppi-install-premium-plugin' == $_REQUEST['action'] && isset($_REQUEST['plugin']) && !empty($_REQUEST['plugin'])  ){
+      $plugin = $_REQUEST['plugin'];
+      check_admin_referer('wppi-install-premium-plugin_' . $plugin);
+      if ( defined('WPPI_PLUGIN_PREMIUM_BASE_URL') ){
+        $url = WPPI_PLUGIN_PREMIUM_BASE_URL . $plugin . '.zip';
         $newfile = 'tmp_file.zip';
         if (!copy($url, $newfile)) {
           wp_die ("failed to copy $url...");
