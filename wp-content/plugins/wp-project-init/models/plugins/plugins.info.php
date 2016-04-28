@@ -35,6 +35,7 @@ $wppi_plugins = array(
     'duplicate-post',
     'tinymce-templates',
     'lh-user-taxonomies',
+    'jpress-archive',
 
   ),
   'Droits et capabilities' => array(
@@ -86,12 +87,6 @@ $wppi_plugins = array(
   'Formulaires' => array(
     'wordpress-form-manager',
   ),
-  /*'Netapsys' => array(
-    'apply-script',
-    'gestion-de-cache',
-    'wp-infinite-loading',
-    'wp-pagination-loading',
-  ),*/
   'E commerce' => array(
     'woocommerce',
     'wp-e-commerce',

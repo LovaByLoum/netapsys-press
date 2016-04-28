@@ -10,6 +10,7 @@ require_once('admin/inc/admin.class.php');
 require_once('inc/generate_themes.class.php');
 require_once('inc/plugin_manager.class.php');
 require_once('models/plugins/plugins.info.php');
+require_once('models/plugins/plugins-custom.info.php');
 require_once('inc/zipper.php');
 
 class WP_Project_Init{
