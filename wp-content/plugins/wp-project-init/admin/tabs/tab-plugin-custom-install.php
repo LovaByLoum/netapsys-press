@@ -46,7 +46,7 @@ if(!empty($message)):?>
             <td>
               <?php
               if ( !is_dir( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $plugin) ){
-                $action = 'install-plugin';
+                $action = 'wppi-install-custom-plugin';
                 $slug = $plugin;
                 $url = wp_nonce_url(
                   add_query_arg(
@@ -54,7 +54,7 @@ if(!empty($message)):?>
                       'action' => $action,
                       'plugin' => $slug
                     ),
-                    admin_url( 'update.php' )
+                    admin_url( 'admin.php' )
                   ),
                   $action.'_'.$slug
                 );
