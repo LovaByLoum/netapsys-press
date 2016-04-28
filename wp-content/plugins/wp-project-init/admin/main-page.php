@@ -1,5 +1,6 @@
 <?php
 $message = WP_Project_Init_Admin::process_post();
+add_thickbox();
 ?>
 <div class="wrap">
     <h2><img src="<?php echo WPI_URL?>/admin/images/logo.png" width="100">WP Project Init</h2>

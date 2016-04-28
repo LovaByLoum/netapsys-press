@@ -106,21 +106,21 @@ if(!empty($message)):?>
                 );
                 echo '<a href="' . $url . '">Installer maintenant</a><br>';
                 if ( !empty($download)){
-                  echo '<a target="_blank" href="' . $download . '">Télécharger la dernière version</a>';
+                  echo '<a target="_blank" href="' . $download . '">Télécharger la dernière version</a><br>';
                 }
               }else{
                 $plugin_path = WP_Project_Init_Admin::get_plugin_path($plugin);
                 if ( is_plugin_active($plugin_path) ){
-                  echo 'Déjà actif';
+                  echo 'Déjà actif<br>';
                 }else{
                   $active_url = wp_nonce_url(self_admin_url('plugins.php?action=activate&plugin='.$plugin_path), 'activate-plugin_'.$plugin_path);
-                  echo '<a href="' . $active_url . '">Activer</a>';
+                  echo '<a href="' . $active_url . '">Activer</a><br>';
                 }
 
               }
+              $view_link = '<a href="' . esc_url( network_admin_url('plugin-install.php?tab=plugin-information&plugin=' . $plugin . '&TB_iframe=true&width=600&height=550' ) ) . '" class="thickbox" title="En savoir plus">En savoir plus</a>';
+              echo $view_link;
               ?>
-
-
             </td>
           </tr>
           <?php endforeach;?>
