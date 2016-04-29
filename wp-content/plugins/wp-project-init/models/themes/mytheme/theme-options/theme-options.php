@@ -81,3 +81,16 @@ function mytheme_options_add_page() {
 function mytheme_framework_page(){
   include 'admin-page.php';
 }
+
+//compatibilité WPML, rendre les options translatables
+if ( function_exists('icl_register_string')){
+  add_action('wp_ajax_icl_tl_rescan', 'mytheme_options_wpml_translate');
+  function mytheme_options_wpml_translate(){
+    $theme_options = get_option( 'mytheme_theme_options' );
+    foreach ( $theme_options as $key => $option ){
+      if ( intval($option)>0 ) continue;
+      if ( !is_string($option) ) continue;
+      icl_register_string( 'mytheme_options', $key, apply_filters('widget_text', $option));
+    }
+  }
+}
