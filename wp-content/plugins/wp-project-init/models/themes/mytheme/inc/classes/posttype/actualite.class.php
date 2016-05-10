@@ -51,7 +51,7 @@ class CActualite {
       //champs wp
       $element->id =  $p->ID;
       $element->titre =  $p->post_title;
-      $element->extrait =  !empty($p->post_excerpt) ? wp_limit_text($p->post_excerpt, 300) : wp_limite_text(  strip_tags( strip_shortcodes( $p->post_content ) ) , 300 );
+      $element->extrait =  !empty($p->post_excerpt) ? wp_limite_text($p->post_excerpt, 300) : wp_limite_text(  strip_tags( strip_shortcodes( $p->post_content ) ) , 300 );
       $element->description = $p->post_content;
       $element->comment_count =  $p->comment_count;
 
