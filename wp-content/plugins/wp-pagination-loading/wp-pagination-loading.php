@@ -544,7 +544,7 @@ class WP_Pagination_Loading{
 				background:none;
 			}
 			.pagination-loading-mask.loading{
-				background: url(\"". plugins_url( "/loading.gif", __FILE__) . "\") no-repeat center center;
+				background: url(\"". plugins_url( "/images/loading.gif", __FILE__) . "\") no-repeat center center;
 			}
 			.pagination-loading-mask > ul,
 			.pagination-loading-mask > tbody,
@@ -563,7 +563,7 @@ class WP_Pagination_Loading{
 		$orderby = isset($this->on_load_sort_value['orderby'])?'"'.$this->on_load_sort_value['orderby'].'"':'null';
 
 		
-		$script = 
+		$script =
 		"<script type=\"text/javascript\">
 			var {$this->clean_js_id}_OBJECT = ".json_encode($this).";
 			var {$this->clean_js_id}_LIMIT = {$this->item_per_page};
@@ -736,34 +736,37 @@ class WP_Pagination_Loading{
 		$script.=	
 			"
         //pagination button
-        jQuery(\".pagination-button-{$this->clean_id}\").live('click',function(){
-          if(WPPL_BUTTON_LOCKED==true) return false;
-          WPPL_BUTTON_LOCKED = true;
-          _page = jQuery(this).data('page');
-          _offset = (_page-1)*{$this->clean_js_id}_LIMIT;
-					{$this->clean_js_id}_OFFSET = _offset;
-          {$this->clean_js_id}_onload();
-          ".apply_filters('ajax_loading_'.$this->clean_id,'')."
-          jQuery.ajax({
-                url: '". admin_url('admin-ajax.php')."',
-                data: {
-                  'action':'wppl_pagination_action',
-                  'object': {$this->clean_js_id}_OBJECT,
-                  'limit': {$this->clean_js_id}_LIMIT,
-                  'offset': {$this->clean_js_id}_OFFSET,
-                  'order': {$this->clean_js_id}_ORDER,
-                  'orderby': {$this->clean_js_id}_ORDERBY,
-                  'filters': {$this->clean_js_id}_FILTERS
-                },
-                dataType:'json',
-                success:function(data) {
-                  jQuery(\"#wppl_item_container_{$this->id}\").html(data.items);
-                  WPPL_BUTTON_LOCKED = false;
-                  {$this->clean_js_id}_success(data);
-                  ".apply_filters('ajax_success_'.$this->clean_id,'')."
-                }
-              });
-        });
+        jQuery(\".pagination-button-{$this->clean_id}\").livequery(function(){
+          jQuery(this).click(function(){
+            if(WPPL_BUTTON_LOCKED==true) return false;
+            WPPL_BUTTON_LOCKED = true;
+            _page = jQuery(this).data('page');
+            _offset = (_page-1)*{$this->clean_js_id}_LIMIT;
+            {$this->clean_js_id}_OFFSET = _offset;
+            {$this->clean_js_id}_onload();
+            ".apply_filters('ajax_loading_'.$this->clean_id,'')."
+            jQuery.ajax({
+                  url: '". admin_url('admin-ajax.php')."',
+                  data: {
+                    'action':'wppl_pagination_action',
+                    'object': {$this->clean_js_id}_OBJECT,
+                    'limit': {$this->clean_js_id}_LIMIT,
+                    'offset': {$this->clean_js_id}_OFFSET,
+                    'order': {$this->clean_js_id}_ORDER,
+                    'orderby': {$this->clean_js_id}_ORDERBY,
+                    'filters': {$this->clean_js_id}_FILTERS
+                  },
+                  dataType:'json',
+                  success:function(data) {
+                    jQuery(\"#wppl_item_container_{$this->id}\").html(data.items);
+                    WPPL_BUTTON_LOCKED = false;
+                    {$this->clean_js_id}_success(data);
+                    ".apply_filters('ajax_success_'.$this->clean_id,'')."
+                  }
+            });
+          });
+        })
+
 
 			});
 			function {$this->clean_js_id}_onload(){
@@ -790,8 +793,13 @@ class WP_Pagination_Loading{
 		</script>";
 		echo $script;
 	}
+
+  public static function wp_enqueue_scripts(){
+    wp_enqueue_script('jquery_livequery', plugins_url('js/jquery.livequery.js', __FILE__)  , array('jquery'));
+  }
 	
 }
 add_action("wp_ajax_wppl_pagination_action", array(WP_Pagination_Loading,'ajax_request'));
 add_action("wp_ajax_nopriv_wppl_pagination_action", array(WP_Pagination_Loading,'ajax_request'));
 add_action("wp_head",array(WP_Pagination_Loading, 'getStyle'));
+add_action( 'wp_enqueue_scripts', array(WP_Pagination_Loading, 'wp_enqueue_scripts') );
