@@ -2,7 +2,7 @@
 /*
  * Plugin Name: jPress Admin Column Search
  * Plugin URI:
- * Text Domain: jpress-acs
+ * Text Domain: jpress-admin-column-search
  * Description: Add an advanced data search and filter on admin page list content for each declared columns
  * Author: Johary Ranarimanana (Netapsys)
  * Author URI: http://www.netapsys.fr/
@@ -13,17 +13,25 @@
 
 //add an admin page menu
 add_action( 'admin_menu', 'jpress_acs_add_custom_admin_page' );
-function jpress_acs_add_custom_admin_page() {
-  add_submenu_page( 'options-general.php', __('Admin Column Search', 'jpress-acs'), __('Admin Column Search', 'jpress-acs'), 'manage_options', 'admin-column-search', 'jpress_acs_admin_page' );
+function jpress_acs_add_custom_admin_page () {
+  add_submenu_page( 'options-general.php', __('Admin Column Search', 'jpress-admin-column-search'), __('Admin Column Search', 'jpress-admin-column-search'), 'manage_options', 'admin-column-search', 'jpress_acs_admin_page' );
 }
+
+//plugin register traduction
+add_action( 'plugins_loaded', 'jpress_acs_plugins_loaded' );
+function jpress_acs_plugins_loaded() {
+  //localisation
+  load_plugin_textdomain( 'jpress-admin-column-search', false, dirname(plugin_basename(__FILE__)).'/languages/' );
+}
+
 //admin page callback
-function jpress_acs_admin_page() {
+function jpress_acs_admin_page () {
   include( 'pages/admin-page.php' );
 }
 
 //admin  init action
 add_action('admin_init', 'jpress_acs_init');
-function jpress_acs_init() {
+function jpress_acs_init () {
   //manage columns values for all post type
   $post_types = get_post_types();
   foreach ( $post_types as $pt ) {
@@ -38,7 +46,7 @@ function jpress_acs_init() {
 
 }
 //callback for manage columns values for all post type
-function jpress_acs_manage_columns( $columns ) {
+function jpress_acs_manage_columns ( $columns ) {
   global $current_screen;
   $pt = $current_screen->post_type;
   $acs_options = get_option( 'jpress_acs_options' );
@@ -63,7 +71,7 @@ function jpress_acs_manage_columns( $columns ) {
 
 //add css styles
 add_action( 'admin_head', 'jpress_acs_admin_head' );
-function jpress_acs_admin_head() {
+function jpress_acs_admin_head () {
 	global $pagenow;
 
   //add scripts
@@ -83,14 +91,14 @@ function jpress_acs_admin_head() {
 
 //save post action
 add_action( 'save_post', 'acs_save_post' );
-function acs_save_post( $post_id ) {
+function acs_save_post ( $post_id ) {
   global $wpdb;
   //delete transient on content update
   $wpdb->query( "DELETE FROM {$wpdb->prefix}options WHERE option_name LIKE '%acs_input_column_%'" );
 }
 
 //manage input field column search
-function jpress_acs_input_column(){
+function jpress_acs_input_column () {
 	global $current_screen, $wpdb;
 
   //use transient to load input data
@@ -112,7 +120,7 @@ function jpress_acs_input_column(){
       }
       $html =
         '<select name="acs_search[' . $key . ']" class="acs_select">
-          <option value="">--' . __( "Séléctionnez", "jpress-acs" ) . '--</option>';
+          <option value="">--' . __( "Select", "jpress-admin-column-search" ) . '--</option>';
 
           //compatibility with jcpt plugins
           $table = $wpdb->posts;
@@ -169,7 +177,7 @@ function jpress_acs_input_column(){
       }
       $html =
       '<select name="acs_search[' . $key . ']" class="acs_select">
-        <option value="">--' . __( "Séléctionnez", "jpress-acs" ) . '--</option>';
+        <option value="">--' . __( "Select", "jpress-admin-column-search" ) . '--</option>';
 
       foreach ( $terms as $term ) {
         $html .= '<option value="' . $term->term_id . '" >' . $term->name . '</option>';
@@ -189,7 +197,7 @@ function jpress_acs_input_column(){
       }
       $html =
       '<select name="acs_search[' . $key . ']" class="acs_select">
-        <option value="">--' . __( "Séléctionnez", "jpress-acs" ) . '--</option>';
+        <option value="">--' . __( "Select", "jpress-admin-column-search" ) . '--</option>';
 
         $options = apply_filters( 'acs_select_option_' . $pt . '_' . $column, null );
 
@@ -225,7 +233,7 @@ function jpress_acs_input_column(){
 
 //add filter form
 if ( is_admin() ) add_filter( 'parse_query', 'acs_admin_posts_filter' );
-function acs_admin_posts_filter( $query ) {
+function acs_admin_posts_filter ( $query ) {
   global $current_screen, $pagenow;
   $pt = $current_screen->post_type;
   $acs_options = get_option( 'jpress_acs_options' );
@@ -311,8 +319,8 @@ function tec_acs_meta_query_filter ($mq, $mk,$mv ) {
 	return $mq;
 }
 
-add_filter('parse_query','tec_acs_query');
-function tec_acs_query( $q ) {
+add_filter( 'parse_query', 'tec_acs_query' );
+function tec_acs_query ( $q ) {
   if ( $q->query_vars['meta_key'] == 'start-date' ) {
     $q->query_vars['meta_key'] = '_EventStartDate';
   }
