@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: jpress-archive\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-06-12 18:18+0300\n"
-"PO-Revision-Date: 2016-06-12 18:18+0300\n"
+"PO-Revision-Date: 2016-06-12 18:23+0300\n"
 "Last-Translator: \n"
 "Language-Team: Johary Ranarimanana <johary.ranarimanana@netapsys.fr>\n"
 "Language: fr_FR\n"
@@ -25,7 +25,7 @@ msgstr "Recherche par colonne"
 #: jpress-admin-column-search.php:200 pages/admin-page.php:100
 #: pages/admin-page.php:121
 msgid "Select"
-msgstr "Sélectionnez"
+msgstr "Sélection"
 
 #: pages/admin-page.php:51
 msgid "Enable Admin Column Search"

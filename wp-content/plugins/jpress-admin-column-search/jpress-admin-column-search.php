@@ -90,8 +90,11 @@ function jpress_acs_admin_head () {
 }
 
 //save post action
-add_action( 'save_post', 'acs_save_post' );
-function acs_save_post ( $post_id ) {
+add_action( 'save_post', 'jpress_acs_save_post' );
+function jpress_acs_save_post ( $post_id ) {
+  jpress_refresh_transient();
+}
+function jpress_refresh_transient () {
   global $wpdb;
   //delete transient on content update
   $wpdb->query( "DELETE FROM {$wpdb->prefix}options WHERE option_name LIKE '%acs_input_column_%'" );
@@ -100,13 +103,13 @@ function acs_save_post ( $post_id ) {
 //manage input field column search
 function jpress_acs_input_column () {
 	global $current_screen, $wpdb;
+  $pt = $current_screen->post_type;
 
   //use transient to load input data
-  $pt = $current_screen->post_type;
-	$transient_name = 'acs_input_column_' . $pt;
-	$inputform = get_transient( $transient_name );
-	if ( $inputform ) return $inputform;
-	
+  //$transient_name = 'acs_input_column_' . $pt;
+	//$inputform = get_transient( $transient_name );
+	//if ( $inputform ) return $inputform;
+
 	$acs_options = get_option( 'jpress_acs_options' );
   $inputform = array();
 
