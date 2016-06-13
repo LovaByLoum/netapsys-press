@@ -1,4 +1,5 @@
 <?php
+global $wpdb;
 $posts_types = get_post_types();
 wp_enqueue_script( 'accordion' );
 
@@ -14,11 +15,33 @@ $acs_options = get_option( 'jpress_acs_options' );
     <div id="icon-options-general" class="icon32"></div>
     <h2><?php echo __('Admin Column Search', 'jpress-admin-column-search');?></h2>
     <br><br>
+
+    <h2 class="nav-tab-wrapper cpac-nav-tab-wrapper">
+      <a href="http://localhost/projets/netapsys-press/srcs/wp-admin/options-general.php?page=codepress-admin-columns&amp;tab=general" class="nav-tab nav-tab-active"><?php echo __('Configuration', 'jpress-admin-column-search');?></a>
+      <a href="http://localhost/projets/netapsys-press/srcs/wp-admin/options-general.php?page=codepress-admin-columns&amp;tab=settings" class="nav-tab"><?php echo __('Réglages', 'jpress-admin-column-search');?></a>
+    </h2>
+
     <form method="post" action="" id="acs-cpt">
-      <div id="side-sortables" class="accordion-container">
-        <ul class="outer-border">
+      <div class="acs-tabs">
+        <ul>
         <?php
-        global $wpdb;
+        $first = true;
+        foreach ( $posts_types as $pt ):
+          if ( in_array( $pt, array(
+            'revision',
+            'attachment',
+            'nav_menu_item',
+          ) ) ){
+            continue;
+          }
+          $posttype = get_post_type_object( $pt );
+          ?>
+          <li><?php if( ! $first ): ?>|<?php endif; ?><a href="#tabs-<?php echo $pt ;?>"><?php echo $posttype->labels->name ;?></a></li>
+          <?php $first = false;
+        endforeach; ?>
+        </ul>
+
+        <?php
         $taxonomies = get_taxonomies();
         foreach ( $posts_types as $pt ):
           if ( in_array( $pt, array(
@@ -37,110 +60,132 @@ $acs_options = get_option( 'jpress_acs_options' );
           unset( $columns['date'] );
           unset( $columns['comments'] );
 
-          /*$metakey = $wpdb->get_col(
-            "SELECT meta_key FROM {$wpdb->prefix}postmeta
-            WHERE post_id = (
-              SELECT ID FROM {$wpdb->prefix}posts  AS p
-              WHERE p.post_type = '" . $pt . "' AND p.post_status = 'publish'
-              ORDER BY ID DESC LIMIT 1
-            ) "
-          );*/
-
           $metakey = $wpdb->get_col(
             "SELECT DISTINCT pm.meta_key FROM {$wpdb->prefix}postmeta  AS pm
             INNER JOIN {$wpdb->prefix}posts AS p ON p.ID = pm.post_id
             WHERE p.post_type = '" . $pt . "' AND p.post_status = 'publish'
             ORDER BY pm.meta_key"
           );
+
           ?>
-            <li class="control-section accordion-section top">
-              <h3 class="accordion-section-title hndle" tabindex="0"><?php echo $posttype->labels->name ;?></h3>
-              <div class="accordion-section-content " style="display: none;">
-                <div class="inside">
-                  <label><input type="checkbox" name="enable[]" value="<?php echo $pt;?>" <?php if ( isset( $acs_options['enable'] ) && in_array( $pt, $acs_options['enable'] ) ) { echo 'checked'; }?>>  <?php echo __("Enable Admin Column Search", "jpress-admin-column-search" );?></label><br><br>
-                   <table id="taxo_table" class="widefat">
-                    <thead>
-                      <tr>
-                        <th><?php echo __("Enable", "jpress-admin-column-search" );?></th>
-                        <th><?php echo __("Column", "jpress-admin-column-search" );?></th>
-                        <th><?php echo __("Post Data", "jpress-admin-column-search" );?></th>
-                        <th><?php echo __("Taxonomy", "jpress-admin-column-search" );?></th>
-                        <th><?php echo __("Post Meta Key", "jpress-admin-column-search" );?></th>
-                      </tr>
-                    </thead>
+        <div id="tabs-<?php echo $pt;?>">
+          <div class="columns-left">
+            <div id="titlediv">
+              <h2><?php echo $posttype->labels->name ;?><a href="<?php echo admin_url( '/edit.php?post_type=' ) . $pt ;?>" class="add-new-h2">Voir</a></h2>
+            </div>
+          </div>
 
-                    <tfoot>
-                      <tr>
-                        <th><?php echo __("Enable", "jpress-admin-column-search" );?></th>
-                        <th><?php echo __("Column", "jpress-admin-column-search" );?></th>
-                        <th><?php echo __("Post Data", "jpress-admin-column-search" );?></th>
-                        <th><?php echo __("Taxonomy", "jpress-admin-column-search" );?></th>
-                        <th><?php echo __("Post Meta Key", "jpress-admin-column-search" );?></th>
-                      </tr>
-                    </tfoot>
+          <div class="inside">
+            <label><input type="checkbox" name="enable[]" value="<?php echo $pt;?>" <?php if ( isset( $acs_options['enable'] ) && in_array( $pt, $acs_options['enable'] ) ) { echo 'checked'; }?>>  <?php echo __("Enable Admin Column Search", "jpress-admin-column-search" );?></label><br><br>
 
-                    <tbody id="sortable" class="taxbody ui-sortable">
-                      <?php foreach ( $columns as $k => $column) : ?>
-                      <tr>
-                        <td>
-                          <input type="checkbox" name="colonne[<?php echo $pt;?>][<?php echo $k;?>]" value="1" <?php if( isset( $acs_options['colonne'][$pt] ) && $acs_options['colonne'][$pt][$k] == 1 ){ echo 'checked'; } ?>/>
-                        </td>
-                        <td>
-                          <label><?php echo $column;?></label>
-                        </td>
-                        <td>
-                          <select name="postdata[<?php echo $pt;?>][<?php echo $k;?>]">
-                          	<option value=""><?php echo __("None", "jpress-admin-column-search" );?></option>
-                            <?php
-                            //compatibilité jcpt create post table
-                            global $wpdb;
-                            $fields = $wpdb->get_results( "SHOW COLUMNS FROM {$wpdb->prefix}{$pt}s" );
-                            if( ! $fields ) {
-                                $fields = $wpdb->get_results( "SHOW COLUMNS FROM {$wpdb->prefix}posts" );
-                            }
-                            if( $fields ) {
-                              foreach ( $fields as $field ) :?>
-                                <option value="<?php echo $field->Field;?>" <?php if ( isset( $acs_options['postdata'][$pt] ) && $acs_options['postdata'][$pt][$k] == $field->Field ) { echo 'selected'; } ?>><?php echo $field->Field;?></option>
-                              <?php endforeach;
-                            }
-                            ?>
-                          </select>
-                        <label><input <?php if ( isset( $acs_options['postdata_field'][$pt] ) && $acs_options['postdata_field'][$pt][$k]  == 'text' ) { echo 'checked'; } elseif ( ! isset( $acs_options['postdata_field'][$pt][$k] ) ) { echo 'checked'; } ?> type="radio" name="postdata_field[<?php echo $pt;?>][<?php echo $k;?>]" value="text"/><?php echo __("Text", "jpress-admin-column-search" );?></label>
-                        <label><input <?php if ( isset( $acs_options['postdata_field'][$pt] ) && $acs_options['postdata_field'][$pt][$k]  == 'select' ){ echo 'checked'; } ?> type="radio" name="postdata_field[<?php echo $pt;?>][<?php echo $k;?>]" value="select"/><?php echo __("Selection", "jpress-admin-column-search" );?></label>
-                        </td>
-                        <td>
-                          <select name="tax[<?php echo $pt;?>][<?php echo $k;?>]">
-                          	<option value=""><?php echo __("None", "jpress-admin-column-search" );?></option>
-                            <?php foreach( $taxonomies as $tx ) : ?>
-                            <option value="<?php echo $tx;?>" <?php if ( isset( $acs_options['tax'][$pt] ) && $acs_options['tax'][$pt][$k]  == $tx ) { echo 'selected'; } ?>><?php echo $tx;?></option>
-                            <?php endforeach;?>
-                          </select>
-                        </td>
-                        <td>
-                          <select name="meta[<?php echo $pt;?>][<?php echo $k;?>]">
-                          	<option value=""><?php echo __("None", "jpress-admin-column-search" );?></option>
-                            <?php foreach ( $metakey as $mt ) :
-                              /*if(preg_match('/^_/', $mt))
-                                continue;*/
-                              ?>
-                            <option value="<?php echo $mt;?>" <?php if ( isset( $acs_options['meta'][$pt] ) && $acs_options['meta'][$pt][$k] == $mt ) { echo 'selected'; } ?>><?php echo $mt;?></option>
-                            <?php endforeach;?>
-                          </select>
-                          <label><input <?php if ( isset ( $acs_options['meta_field'][$pt] ) && $acs_options['meta_field'][$pt][$k] == 'text' ) { echo 'checked'; } elseif ( ! isset( $acs_options['meta_field'][$pt][$k] ) ) { echo 'checked'; } ?> type="radio" name="meta_field[<?php echo $pt;?>][<?php echo $k;?>]" value="text"/><?php echo __("Text", "jpress-admin-column-search" );?></label>
-                          <label><input <?php if ( isset ( $acs_options['meta_field'][$pt] ) && $acs_options['meta_field'][$pt][$k] == 'select' ) { echo 'checked'; } ?> type="radio" name="meta_field[<?php echo $pt;?>][<?php echo $k;?>]" value="select"/><?php echo __("Select", "jpress-admin-column-search" );?></label>
-                        </td>
-                      </tr>
-                      <?php endforeach; ?>
-                    </tbody>
-                  </table>
+            <div id="side-sortables" class="accordion-container">
+              <ul class="outer-border acs-sortable">
+                <?php foreach ( $columns as $k => $column) : ?>
+                <li class="control-section accordion-section top">
+                  <h4 class="accordion-section-title hndle" tabindex="0">
+                    <span class="acs_column_sort"></span>
+                    <span class="acs_column_title"><?php echo $column;?></span>
+                  </h4>
+                  <div class="accordion-section-content " style="display: none;">
+                    <div class="inside">
+                      <table class="widefat">
+                        <thead>
+                        <tr>
+                          <th><?php echo __("Enable", "jpress-admin-column-search" );?></th>
+                          <th><?php echo __("Column", "jpress-admin-column-search" );?></th>
+                          <th><?php echo __("Post Data", "jpress-admin-column-search" );?></th>
+                          <th><?php echo __("Taxonomy", "jpress-admin-column-search" );?></th>
+                          <th><?php echo __("Post Meta Key", "jpress-admin-column-search" );?></th>
+                        </tr>
+                        </thead>
 
+                        <tfoot>
+                        <tr>
+                          <th><?php echo __("Enable", "jpress-admin-column-search" );?></th>
+                          <th><?php echo __("Column", "jpress-admin-column-search" );?></th>
+                          <th><?php echo __("Post Data", "jpress-admin-column-search" );?></th>
+                          <th><?php echo __("Taxonomy", "jpress-admin-column-search" );?></th>
+                          <th><?php echo __("Post Meta Key", "jpress-admin-column-search" );?></th>
+                        </tr>
+                        </tfoot>
+
+                        <tbody class="taxbody ui-sortable">
+                          <tr>
+                            <td>
+                              <input type="checkbox" name="colonne[<?php echo $pt;?>][<?php echo $k;?>]" value="1" <?php if( isset( $acs_options['colonne'][$pt] ) && $acs_options['colonne'][$pt][$k] == 1 ){ echo 'checked'; } ?>/>
+                            </td>
+                            <td>
+                              <label><?php echo $column;?></label>
+                            </td>
+                            <td>
+                              <select name="postdata[<?php echo $pt;?>][<?php echo $k;?>]">
+                                <option value=""><?php echo __("None", "jpress-admin-column-search" );?></option>
+                                <?php
+                                //compatibilité jcpt create post table
+                                global $wpdb;
+                                $fields = $wpdb->get_results( "SHOW COLUMNS FROM {$wpdb->prefix}{$pt}s" );
+                                if( ! $fields ) {
+                                  $fields = $wpdb->get_results( "SHOW COLUMNS FROM {$wpdb->prefix}posts" );
+                                }
+                                if( $fields ) {
+                                  foreach ( $fields as $field ) :?>
+                                    <option value="<?php echo $field->Field;?>" <?php if ( isset( $acs_options['postdata'][$pt] ) && $acs_options['postdata'][$pt][$k] == $field->Field ) { echo 'selected'; } ?>><?php echo $field->Field;?></option>
+                                  <?php endforeach;
+                                }
+                                ?>
+                              </select>
+                              <label><input <?php if ( isset( $acs_options['postdata_field'][$pt] ) && $acs_options['postdata_field'][$pt][$k]  == 'text' ) { echo 'checked'; } elseif ( ! isset( $acs_options['postdata_field'][$pt][$k] ) ) { echo 'checked'; } ?> type="radio" name="postdata_field[<?php echo $pt;?>][<?php echo $k;?>]" value="text"/><?php echo __("Text", "jpress-admin-column-search" );?></label>
+                              <label><input <?php if ( isset( $acs_options['postdata_field'][$pt] ) && $acs_options['postdata_field'][$pt][$k]  == 'select' ){ echo 'checked'; } ?> type="radio" name="postdata_field[<?php echo $pt;?>][<?php echo $k;?>]" value="select"/><?php echo __("Selection", "jpress-admin-column-search" );?></label>
+                            </td>
+                            <td>
+                              <select name="tax[<?php echo $pt;?>][<?php echo $k;?>]">
+                                <option value=""><?php echo __("None", "jpress-admin-column-search" );?></option>
+                                <?php foreach( $taxonomies as $tx ) : ?>
+                                  <option value="<?php echo $tx;?>" <?php if ( isset( $acs_options['tax'][$pt] ) && $acs_options['tax'][$pt][$k]  == $tx ) { echo 'selected'; } ?>><?php echo $tx;?></option>
+                                <?php endforeach;?>
+                              </select>
+                            </td>
+                            <td>
+                              <select name="meta[<?php echo $pt;?>][<?php echo $k;?>]">
+                                <option value=""><?php echo __("None", "jpress-admin-column-search" );?></option>
+                                <?php foreach ( $metakey as $mt ) :
+                                  /*if(preg_match('/^_/', $mt))
+                                    continue;*/
+                                  ?>
+                                  <option value="<?php echo $mt;?>" <?php if ( isset( $acs_options['meta'][$pt] ) && $acs_options['meta'][$pt][$k] == $mt ) { echo 'selected'; } ?>><?php echo $mt;?></option>
+                                <?php endforeach;?>
+                              </select>
+                              <label><input <?php if ( isset ( $acs_options['meta_field'][$pt] ) && $acs_options['meta_field'][$pt][$k] == 'text' ) { echo 'checked'; } elseif ( ! isset( $acs_options['meta_field'][$pt][$k] ) ) { echo 'checked'; } ?> type="radio" name="meta_field[<?php echo $pt;?>][<?php echo $k;?>]" value="text"/><?php echo __("Text", "jpress-admin-column-search" );?></label>
+                              <label><input <?php if ( isset ( $acs_options['meta_field'][$pt] ) && $acs_options['meta_field'][$pt][$k] == 'select' ) { echo 'checked'; } ?> type="radio" name="meta_field[<?php echo $pt;?>][<?php echo $k;?>]" value="select"/><?php echo __("Select", "jpress-admin-column-search" );?></label>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </li>
+                <?php endforeach; ?>
+              </ul>
+              <div class="column-footer">
+                <div class="order-message">Drag and drop to reorder</div>
+
+                <div class="button-container">
+                  <a href="javascript:;" class="add_column button button-primary">+ Add Column</a><br>
                 </div>
+
               </div>
-            </li>
+            </div>
+
+
+          </div>
+
+        </div>
+
         <?php endforeach; ?>
-        </ul>
+
       </div>
-      <br>
+
       <input type="submit" class="button-primary" name="acssubmit" value="<?php echo __("Save", "jpress-admin-column-search" );?>">
     </form>
 </div>

@@ -1,4 +1,9 @@
 jQuery(document).ready(function(){
+
+    jQuery( ".acs-sortable" ).sortable();
+    jQuery( ".acs-sortable" ).disableSelection();
+    jQuery( ".acs-tabs" ).tabs();
+
     if(typeof acs_values != 'undefined'){
         jQuery(window).load(function(){
             jQuery.each(acs_values, function(index, value) {

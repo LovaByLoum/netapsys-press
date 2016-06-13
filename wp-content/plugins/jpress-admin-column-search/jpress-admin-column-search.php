@@ -40,9 +40,10 @@ function jpress_acs_init () {
 
   //admin styles
   wp_enqueue_style( 'jpress-acs-style', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/acs-styles.css' );
+  wp_enqueue_style( 'jpress-acs-ui', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/acs-ui.css' );
 
   //admin script
-  wp_enqueue_script( 'jpress-acs-script', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/acs-script.js' );
+  wp_enqueue_script( 'jpress-acs-script', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/acs-script.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-tabs' ) );
 
 }
 //callback for manage columns values for all post type
