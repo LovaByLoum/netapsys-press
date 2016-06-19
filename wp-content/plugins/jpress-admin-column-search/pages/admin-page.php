@@ -11,7 +11,7 @@
     <?php $active_tab = isset( $_REQUEST['tab'] ) ? $_REQUEST['tab'] : 'configuration';?>
     <h2 class="nav-tab-wrapper">
       <a href="options-general.php?page=admin-column-search&tab=configuration" class="nav-tab <?php if ( $active_tab == 'configuration' ) : ?>nav-tab-active<?php endif;?>"><?php echo __('Configuration', 'jpress-admin-column-search');?></a>
-      <a href="options-general.php?page=admin-column-search&tab=settings" class="nav-tab <?php if ( $active_tab == 'settings' ) : ?>nav-tab-active<?php endif;?>"><?php echo __('Réglages', 'jpress-admin-column-search');?></a>
+      <a href="options-general.php?page=admin-column-search&tab=settings" class="nav-tab <?php if ( $active_tab == 'settings' ) : ?>nav-tab-active<?php endif;?>"><?php echo __('Settings', 'jpress-admin-column-search');?></a>
     </h2>
 
     <?php

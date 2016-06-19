@@ -16,6 +16,7 @@ Also you can change the settings in the plugin manager admin page, to enable adm
 
 You can make search and filter on post data, post meta and terms association
 
+This plugin don't add custom columns but add search and filters features on existant columns. To add and manage custom column, please refer to the WordPress Hooks or other plugin such as CodePress Admin Columns.
 
 = Localizations =
 * English
