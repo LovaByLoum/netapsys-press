@@ -99,6 +99,7 @@ function jpress_acs_render_select( $options, $selected, $has_no_key = false, $ec
     }
 
     $value = html_entity_decode( $value, ENT_QUOTES, 'utf-8' );
+    if ( empty( $label ) ) continue;
 
     if ( is_array( $selected ) ){
       $html .= '<option value="' . ( $value ) . '" ' . ( in_array( $value, $selected ) ? 'selected' : '' ) . '>' . $label . '</option>' ;
