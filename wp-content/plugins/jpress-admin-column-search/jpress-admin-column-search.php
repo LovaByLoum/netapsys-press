@@ -236,6 +236,7 @@ function jpress_acs_input_column () {
           '0' => __( "False", "jpress-admin-column-search" )
         );
         $html .= jpress_acs_render_select( $options, $current_value, false, false );
+        $html .= '</select>';
         break;
 
       default :
