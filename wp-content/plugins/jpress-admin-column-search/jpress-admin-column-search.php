@@ -232,8 +232,8 @@ function jpress_acs_input_column () {
       case 'true-false' :
         $html = '<select name="acs_search[' . $column_name . ']" class="acs_select"><option value="">' . __( "None", "jpress-admin-column-search" ) . '</option>';
         $options = array(
-          '1' => 'Oui',
-          '0' => 'Non'
+          '1' => __( "True", "jpress-admin-column-search" ),
+          '0' => __( "False", "jpress-admin-column-search" )
         );
         $html .= jpress_acs_render_select( $options, $current_value, false, false );
         break;

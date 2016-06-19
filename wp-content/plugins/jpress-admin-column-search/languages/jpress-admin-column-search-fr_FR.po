@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: jpress-archive\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-20 01:32+0300\n"
-"PO-Revision-Date: 2016-06-20 01:35+0300\n"
+"POT-Creation-Date: 2016-06-20 01:48+0300\n"
+"PO-Revision-Date: 2016-06-20 01:48+0300\n"
 "Last-Translator: \n"
 "Language-Team: Johary Ranarimanana <johary.ranarimanana@netapsys.fr>\n"
 "Language: fr_FR\n"
@@ -26,6 +26,14 @@ msgstr "Recherche par colonne"
 #: pages/tab-configuration.php:152 pages/tab-configuration.php:172
 msgid "None"
 msgstr "Aucun"
+
+#: jpress-admin-column-search.php:235
+msgid "True"
+msgstr "Vrai"
+
+#: jpress-admin-column-search.php:236
+msgid "False"
+msgstr "Faux"
 
 #: pages/admin-page.php:13
 msgid "Configuration"
