@@ -26,7 +26,7 @@ define( 'TAXONOMY_MOT_CLE_ACTUS', 'actus_tag' );
 
 //champs personnalisés (meta value) : syntaxe FIELD_{type de post}_{nom du champ}
 define ('FIELD_POST_POST_NOTE', 'post_note');
-define ('FIELD_ACTUALITE_LIEU', 'actualite_lieu');
+define ('FIELD_ACTUALITE_LIEU', 'lieu');
 define ('FIELD_TYPE_ACTUS_ICONE', 'type_actus_icone');
 define ('FIELD_USER_CIVILITE', 'user_civilite');
 define ('FIELD_USER_DATE_NAISSANCE', 'user_date');

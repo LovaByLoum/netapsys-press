@@ -102,37 +102,36 @@ function jpress_archive_add_archive_link( $actions, $id ) {
 add_action( 'admin_action_-1', 'jpress_archive_action'  );
 add_action( 'admin_action_jpress_archive', 'jpress_archive_action'  );
 function jpress_archive_action() {
-    if ( ! (
-        isset( $_GET['post']) &&
-        (
-            ( isset( $_REQUEST['action']) || isset( $_REQUEST['action2']) ) &&
-            ( 'jpress_archive' == $_REQUEST['action'] || 'jpress_archive' == $_REQUEST['action2'] )
-        )
-    ) ) {
+    if (
+      ( isset( $_REQUEST['action']) || isset( $_REQUEST['action2']) ) &&
+      ( 'jpress_archive' == $_REQUEST['action'] || 'jpress_archive' == $_REQUEST['action2'] )
+    ) {
+
+      if ( ! isset( $_GET['post'] ) ){
         wp_die( __( 'No post to archive !',  'jpress-archive'  ) );
-    }
+      }
 
-    $ids = ( isset( $_GET['post'] ) ? $_GET['post'] : $_REQUEST['post'] );
-    $ids = ( ! is_array( $ids ) ? ( (array)$ids ) : $ids );
-    if ( !empty($ids) ) {
-        foreach ( $ids as $id ) {
-            // add old post_status to post meta
-            $pst = get_post( $id );
-            add_post_meta( $id, 'jpress_archive_old_post_status', $pst->post_status, TRUE );
-            // change post status
-            jpress_archive_change_post_status( $id, 'archived' );
-        }
-        $redirect_post_type = '';
-        $archived_post_type = get_post_type( $ids[0] );
-        if ( ! empty( $archived_post_type ) ) {
-            $redirect_post_type = 'post_type=' . $archived_post_type . '&';
-        }
-        wp_redirect( admin_url( 'edit.php?' . $redirect_post_type . '&post_status=archived&archived=1&ids=' . implode( ',', $ids ) ) );
-        exit;
-    } else {
-        wp_die( __( 'Sorry, no ID specified.', 'jpress-archive' ) );
+      $ids = ( isset( $_GET['post'] ) ? $_GET['post'] : $_REQUEST['post'] );
+      $ids = ( ! is_array( $ids ) ? ( (array)$ids ) : $ids );
+      if ( !empty($ids) ) {
+          foreach ( $ids as $id ) {
+              // add old post_status to post meta
+              $pst = get_post( $id );
+              add_post_meta( $id, 'jpress_archive_old_post_status', $pst->post_status, TRUE );
+              // change post status
+              jpress_archive_change_post_status( $id, 'archived' );
+          }
+          $redirect_post_type = '';
+          $archived_post_type = get_post_type( $ids[0] );
+          if ( ! empty( $archived_post_type ) ) {
+              $redirect_post_type = 'post_type=' . $archived_post_type . '&';
+          }
+          wp_redirect( admin_url( 'edit.php?' . $redirect_post_type . '&post_status=archived&archived=1&ids=' . implode( ',', $ids ) ) );
+          exit;
+      } else {
+          wp_die( __( 'Sorry, no ID specified.', 'jpress-archive' ) );
+      }
     }
-
 }
 
 //restore action process

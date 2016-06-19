@@ -150,7 +150,7 @@ class CActualite {
     $actu = self::getById($post_id);
     switch($column_name){
       case 'vignette':
-        echo '<img src="' . $actu->image . '"/>';
+        echo '<img width="50" src="' . $actu->image . '"/>';
         break;
       case 'lieu':
         echo $actu->lieu;

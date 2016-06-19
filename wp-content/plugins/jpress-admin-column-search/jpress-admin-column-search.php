@@ -41,9 +41,14 @@ function jpress_acs_init () {
   //admin styles
   wp_enqueue_style( 'jpress-acs-style', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/acs-styles.css' );
   wp_enqueue_style( 'jpress-acs-ui', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/acs-ui.css' );
+  wp_enqueue_style( 'jpress-acs-date-picker', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/jquery-ui-datepicker.css' );
+  wp_enqueue_style( 'jpress-acs-multiselect', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/jquery.multiselect.css' );
 
   //admin script
   wp_enqueue_script( 'jpress-acs-script', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/acs-script.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-tabs' ) );
+  wp_enqueue_script( 'jpress-acs-date-picker', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/jquery.ui.datepicker.js', array( 'jquery' ) );
+  wp_enqueue_script( 'jpress-acs-date-picker-fr', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/jquery.ui.datepicker-fr.js', array( 'jquery' ) );
+  wp_enqueue_script( 'jpress-acs-multiselect', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/jquery.multiselect.js', array( 'jquery' ) );
 
 }
 //callback for manage columns values for all post type
@@ -57,37 +62,18 @@ function jpress_acs_manage_columns ( $columns ) {
   	return $columns;
   
   //if admin search column is not active for the post type
-  if ( isset( $acs_options['enable'] ) && ! in_array( $pt, $acs_options['enable'] ) )
+  if ( ! is_array( $acs_options['enable'] ) || ! in_array( $pt, $acs_options['enable'] ) )
     return  $columns;
 
-  if ( isset( $acs_options['colonne'][$pt] ) ) {
+  if ( isset( $acs_options['type'][$pt] ) ) {
+    $input_form = jpress_acs_input_column();
     foreach ( $columns as $k => $col ) {
-      if ( $acs_options['colonne'][$pt][$k] == 1 ) {
-        $columns[$k] = $columns[$k] . '<span class="acs_input_cible" data-col="' . $k . '">&nbsp;</span>';
+      if ( ! empty( $acs_options['type'][$pt][$k] ) ) {
+        $columns[$k] = $columns[$k] . '<div style="display:none;" class="acs_input_cible" data-col="' . $k . '">' . $input_form[$k] . '</div>';
       }
     }
   }
   return $columns;
-}
-
-//add css styles
-add_action( 'admin_head', 'jpress_acs_admin_head' );
-function jpress_acs_admin_head () {
-	global $pagenow;
-
-  //add scripts
-  echo "\r\n<script type=\"text/javascript\">";
-
-      if ( isset( $_GET['acs_search_submit'] ) && isset( $_GET['acs_search'] ) ) {
-        $fillvalues = json_encode( $_GET['acs_search'] );
-        echo "\r\nvar acs_values = " . $fillvalues . ";";
-      }
-
-      if ( $pagenow == 'edit.php' ) {
-      	echo "\r\nvar acs_dropbox = " . jpress_acs_input_column() . ";";
-      }
-
-  echo "</script>\n";
 }
 
 //save post action
@@ -101,137 +87,152 @@ function jpress_refresh_transient () {
   $wpdb->query( "DELETE FROM {$wpdb->prefix}options WHERE option_name LIKE '%acs_input_column_%'" );
 }
 
+function jpress_acs_render_select( $options, $selected, $has_no_key = false, $echo = true, $args = array() ){
+  $html = '';
+  foreach ( $options as $value => $label ){
+    $value = ($has_no_key) ? $label : $value ;
+    if ( isset( $args['key'] ) ){
+      $value = $label->$args['key'];
+    }
+    if ( isset( $args['value'] ) ){
+      $label = $label->$args['value'];
+    }
+
+    $value = html_entity_decode( $value, ENT_QUOTES, 'utf-8' );
+
+    if ( is_array( $selected ) ){
+      $html .= '<option value="' . ( $value ) . '" ' . ( in_array( $value, $selected ) ? 'selected' : '' ) . '>' . $label . '</option>' ;
+    } else {
+      $html .= '<option value="' . ( $value ) . '" ' . ( ( isset($selected) && !empty( $selected ) && $selected == $value ) ? 'selected' : '' ) . '>' . $label . '</option>' ;
+    }
+  }
+  if ( $echo ) {
+    echo $html;
+  } else {
+    return $html;
+  }
+}
+
 //manage input field column search
 function jpress_acs_input_column () {
 	global $current_screen, $wpdb;
   $pt = $current_screen->post_type;
+  $acs_options = get_option( 'jpress_acs_options' );
+
+  if ( ! isset( $pt ) ){
+    return false;
+  }
+
+  if ( ! isset( $acs_options['enable'] ) || empty( $acs_options['enable'] ) ) {
+    return false;
+  }
+
+  //check if enable
+  if ( ! in_array( $pt, $acs_options['enable'] ) ) {
+    return false;
+  }
 
   //use transient to load input data
   //$transient_name = 'acs_input_column_' . $pt;
 	//$inputform = get_transient( $transient_name );
 	//if ( $inputform ) return $inputform;
 
-	$acs_options = get_option( 'jpress_acs_options' );
   $inputform = array();
+  foreach ( $acs_options['type'][$pt] as $column_name => $type ) {
+    //check if column not enable
+    if ( empty( $type ) ) continue;
 
-  //create table field drop box
-  if ( isset( $acs_options['postdata_field'][$pt] ) ) {
-    foreach ( $acs_options['postdata_field'][$pt] as $key => $val) {
-      if ( empty($val) ) continue;
-      if ( $val != 'select' ) continue;
-      if ( isset( $_GET['acs_search'] ) ) {
-        $current_value = $_GET['acs_search'][$key];
-      }
-      $html =
-        '<select name="acs_search[' . $key . ']" class="acs_select">
-          <option value="">--' . __( "Select", "jpress-admin-column-search" ) . '--</option>';
+    //load column search info
+    $field = isset( $acs_options['field'][$pt][$column_name] ) ? $acs_options['field'][$pt][$column_name] : '';
+    //check if field not enable
+    if ( empty( $field ) ) continue;
 
-          //compatibility with jcpt plugins
-          $table = $wpdb->posts;
-          if ( function_exists( 'jcpt_whereis' ) ) {
-            global $jcpt_options;
-            if ( is_null( $jcpt_options ) ) {
+    $display = isset( $acs_options['display'][$pt][$column_name] ) ? $acs_options['display'][$pt][$column_name] : 'free-search';
+    $operator = isset( $acs_options['operator'][$pt][$column_name] ) ? $acs_options['operator'][$pt][$column_name] : '=';
+
+    //current search value
+    $current_value = '';
+    if ( isset( $_GET['acs_search'] ) ) {
+      $current_value = $_GET['acs_search'][$column_name];
+    }
+
+    $html = '';
+    switch ( $display ){
+      case 'free-search' :
+        $html = '<input type="text" name="acs_search[' . $column_name . ']" class="acs_input" value="' . $current_value . '"/>';
+        break;
+
+      case 'selection' :
+      case 'multiple' :
+        $html = '<select name="acs_search[' . $column_name . ']' . ( ( $display == 'multiple' ) ? '[]' : '' ) . '" class="acs_select ' . ( ( $display == 'multiple' ) ? 'acs_multiselect' : '' ) . '" ' . ( ( $display == 'multiple' ) ? 'multiple' : '' ) . '><option value="">' . __( "None", "jpress-admin-column-search" ) . '</option>';
+        switch ( $type ) {
+          case 'basic-field' :
+            //compatibility with jcpt plugins
+            $table = $wpdb->posts;
+            if ( function_exists( 'jcpt_whereis' ) ) {
+              global $jcpt_options;
+              if ( is_null( $jcpt_options ) ) {
                 $jcpt_options = get_option( 'jcpt_options' );
+              }
+              if ( in_array( $pt, $jcpt_options['enable'] ) ) {
+                $table = $wpdb->prefix . $pt . 's';
+              }
             }
-            if ( in_array( $pt, $jcpt_options['enable'] ) ) {
-              $table = $wpdb->prefix . $pt . 's';
+            if ( $field == 'post_author' ) {
+              $sql = "SELECT DISTINCT p.{$field}, u.display_name FROM {$table} as p INNER JOIN {$wpdb->users} as u ON p.post_author = u.ID";
+              $options = $wpdb->get_results( $sql );
+              $html .= jpress_acs_render_select( $options, $current_value, false, false, array( 'key' => 'post_author', 'value' => 'display_name' ) );
+            } else {
+              $sql = "SELECT DISTINCT {$field} FROM {$table}";
+              $options = $wpdb->get_col( $sql );
+              $html .= jpress_acs_render_select( $options, $current_value, true, false );
             }
-          }
-          $column = $acs_options['postdata'][$pt][$key];
-
-          $options = apply_filters( 'jpress_acs_select_option_' . $pt . '_' . $column, null );
-
-          if ( is_null( $options ) ) {
-            $sql = "SELECT DISTINCT {$column} FROM {$table} WHERE post_status = 'publish'";
+            break;
+          case 'taxonomy' :
+            $terms = get_terms(
+              $field,
+              array(
+                'orderby' => 'name',
+                'order' => 'ASC',
+                'hide_empty' => false
+              )
+            );
+            $html .= jpress_acs_render_select( $terms, $current_value, true, false, array( 'key' => 'term_id', 'value' => 'name' ) );
+            break;
+          case 'custom-field' :
+            $sql = "SELECT DISTINCT pm.meta_value FROM {$wpdb->prefix}postmeta AS pm
+            INNER JOIN {$wpdb->prefix}posts AS p ON ( p.ID = pm.post_id )
+            WHERE pm.meta_key = '" . $field . "'
+            AND p.post_type ='" . $pt . "'
+            ORDER BY pm.meta_value ASC";
             $options = $wpdb->get_col( $sql );
-            $final_options = array();
-            foreach ( $options as $val ) {
-              $final_options[$val] = apply_filters( 'acs_select_label_' . $pt . '_' . $key, $val );
-            }
-          } else {
-            $final_options = $options;
-          }
-
-          $final_options = array_filter( $final_options );
-          asort( $final_options );
-          foreach ( $final_options as $fkey => $val ) {
-            if ( is_null( $fkey ) || empty( $fkey ) ) $fkey = '0';
-            $html .= '<option value="' . $fkey . '">' . $val . '</option>';
-          }
-      $html .= '</select>';
-      $inputform[$key] = $html;
-    }
-  }
-
-  //create taxonomy dropbox
-  if ( isset( $acs_options['tax'][$pt] ) ) {
-    foreach ( $acs_options['tax'][$pt] as $key => $val ) {
-      if ( empty( $val ) ) continue;
-      $terms = get_terms(
-        $val,
-        array(
-          'orderby' => 'name',
-          'order' => 'ASC',
-          'hide_empty' => false
-        )
-      );
-      $current_value = null;
-      if ( isset( $_GET['acs_search'] ) ) {
-        $current_value = $_GET['acs_search'][$key];
-      }
-      $html =
-      '<select name="acs_search[' . $key . ']" class="acs_select">
-        <option value="">--' . __( "Select", "jpress-admin-column-search" ) . '--</option>';
-
-      foreach ( $terms as $term ) {
-        $html .= '<option value="' . $term->term_id . '" >' . $term->name . '</option>';
-      }
-      $html .= '</select>';
-      $inputform[$key] = $html;
-    }
-  }
-
-  //create meta dropbox
-  if ( isset( $acs_options['meta_field'][$pt] ) ) {
-    foreach ( $acs_options['meta_field'][$pt] as $key => $val ) {
-      if ( empty( $val ) ) continue;
-      if ($val!='select') continue;
-      if ( isset( $_GET['acs_search'] ) ) {
-        $current_value = $_GET['acs_search'][$key];
-      }
-      $html =
-      '<select name="acs_search[' . $key . ']" class="acs_select">
-        <option value="">--' . __( "Select", "jpress-admin-column-search" ) . '--</option>';
-
-        $options = apply_filters( 'acs_select_option_' . $pt . '_' . $column, null );
-
-        if ( is_null( $options ) ) {
-          $sql = "SELECT DISTINCT pm.meta_value FROM {$wpdb->prefix}postmeta AS pm
-              INNER JOIN {$wpdb->prefix}posts AS p ON (p.ID = pm.post_id)
-              WHERE pm.meta_key = '" . $acs_options['meta'][$pt][$key] . "'
-              AND p.post_type ='" . $pt . "'";
-
-          $options = $wpdb->get_col( $sql );
-          $final_options = array();
-          foreach ( $options as $val ) {
-            $final_options[$val] = apply_filters( 'acs_select_label_' . $pt . '_' . $key, $val );
-          }
-        } else {
-          $final_options = $options;
+            $html .= jpress_acs_render_select( $options, $current_value, true, false );
+            break;
         }
+        $html .= '</select>';
+        break;
 
-        $final_options = array_filter( $final_options );
-        asort( $final_options );
-        foreach ( $final_options as $fkey => $val ) {
-          $html .= '<option value="' .$fkey. '">' . $val . '</option>';
-        }
-      $html .= '</select>';
-      $inputform[$key] = $html;
+      case 'date-picker' :
+        $html = '<input type="text" name="acs_search[' . $column_name . ']" placeholder="YYYY-MM-DD" readonly class="acs_input acs_datepicker" value="' . $current_value . '"/>';
+        break;
+
+      case 'true-false' :
+        $html = '<select name="acs_search[' . $column_name . ']" class="acs_select"><option value="">' . __( "None", "jpress-admin-column-search" ) . '</option>';
+        $options = array(
+          '1' => 'Oui',
+          '0' => 'Non'
+        );
+        $html .= jpress_acs_render_select( $options, $current_value, false, false );
+        break;
+
+      default :
+        break;
     }
+
+    $inputform[$column_name] = $html;
+
   }
 
-  $inputform = json_encode( $inputform );
-  set_transient( $transient_name, $inputform, 86400 );
   return $inputform;
 }
 
@@ -245,55 +246,103 @@ function acs_admin_posts_filter ( $query ) {
   	if ( ! isset( $query->query['post_type'] ) || $query->query['post_type'] != $pt ) return $query;
     foreach ( $_GET['acs_search'] as $k => $v) {
       if ( $v == "" ) continue;
-      
-      //get priority
-      //1 : post data	  
-      if ( !empty( $acs_options['postdata'][$pt][$k] ) ) {
-        global $wpdb;
-        $fields = $wpdb->get_results( "SHOW COLUMNS FROM {$wpdb->prefix}{$pt}s" );
-        if ( ! $fields ) {
-            $fields = $wpdb->get_results( "SHOW COLUMNS FROM {$wpdb->prefix}posts" );
-        }
-        if ( $fields ) {
-            $switch = "switch ( \$acs_options['postdata'][\$pt][\$k] ) {\n";
-            $switch .= "case 'post_title' :
-                           \$query->query_vars['s'] = \$v;
-                           break;\n" ;
-            foreach ( $fields as $field ) {
-                $switch .= "case '" . $field->Field . "' :
-                           \$query->query_vars['" . $field->Field . "'] = \$v;
-                           break;\n" ;
+
+      $type = $acs_options['type'][$pt][$k];
+      if ( empty( $type ) ) continue;
+
+      $field = $acs_options['field'][$pt][$k];
+      if ( empty( $field ) ) continue;
+
+      $display = isset( $acs_options['display'][$pt][$k] ) ? $acs_options['display'][$pt][$k] : 'free-search';
+      $operator = isset( $acs_options['operator'][$pt][$k] ) ? $acs_options['operator'][$pt][$k] : '=';
+
+      switch ( $type ){
+        case 'basic-field' :
+          if ( $field == 'post_title' || $field == 'post_content' ){
+            $query->query_vars['s'] = $v;
+          } else if ( $field == 'post_author' ) {
+            if ( $display == 'multiple' ){
+              $query->query_vars['author__in'] = $v;
+            } else {
+              $query->query_vars['author'] = $v;
             }
-            $switch .= "default : break;
-            \n}";
-            eval( $switch );
-        }
+          } else if (
+            $field == 'post_date' ||
+            $field == 'post_date_gmt' ||
+            $field == 'post_modified' ||
+            $field == 'post_modified_gmt'
+          ) {
+            if ( preg_match( '!([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})!', $v, $matches ) ){
+              list( $date, $year, $month, $day, $hour, $minute, $second ) = $matches;
+              $query->query_vars['date_query'] = array(
+                'year' => $year,
+                'month' => $month,
+                'day' => $day,
+                'hour' => $hour,
+                'minute' => $minute,
+                'second' => $second,
+                'column' => $field,
+                'compare' => $operator
+              );
+            } else if ( preg_match( '!([0-9]{4})-([0-9]{2})-([0-9]{2})!', $v, $matches ) ) {
+              list( $date, $year, $month, $day ) = $matches;
+              $query->query_vars['date_query'] = array(
+                'year' => $year,
+                'month' => $month,
+                'day' => $day,
+                'column' => $field,
+                'compare' => $operator
+              );
+            }
+          } else {
+            $query->query_vars[$field] = $v;
+          }
+          break;
 
-      //2 : taxonomy
-      } elseif ( ! empty( $acs_options['tax'][$pt][$k] ) ) {
-	      $tq = array (
-	        'taxonomy' => $acs_options['tax'][$pt][$k],
-	        'field' => 'id',
-	        'terms' => $v,
-	        'include_children' => true
-	      );
-  	    $query->query_vars['tax_query'][] = apply_filters( 'jpress_acs_meta_query_filter', $tq, $acs_options['tax'][$pt][$k], $v );
-	      $query->query_vars['tax_query']['relation'] = 'AND';
+        case 'taxonomy' :
+          if ( is_array( $v ) ) $v = array_filter( $v );
+          if ( empty( $v ) ) continue;
 
- 	    //3 : meta query
-      } else {
-	      $mq = array(
-	        'key' => $acs_options['meta'][$pt][$k],
-	        'value' => $v,
-	        'compare' => 'LIKE'
-	      );
-	      $query->query_vars['meta_query'][] = apply_filters( 'jpress_acs_meta_query_filter', $mq, $acs_options['meta'][$pt][$k], $v );
-	      $query->query_vars['meta_query']['relation'] = 'AND';
+          $tq = array (
+            'taxonomy' => $field,
+            'terms' => $v,
+            'include_children' => true
+          );
+          if ( $display == 'selection' ) {
+            $tq['field'] = 'id';
+          } elseif ( $display == 'multiple' ) {
+            $tq['field'] = 'id';
+            $tq['operator'] = 'IN';
+          } else {
+            $tq['field'] = 'name';
+          }
+          $query->query_vars['tax_query'][] = $tq;
+          $query->query_vars['tax_query']['relation'] = 'AND';
+          break;
+
+        case 'custom-field' :
+          $mq = array(
+            'key' => $field,
+            'value' => $v,
+          );
+          if ( $display == 'selection' ) {
+            $mq['compare'] = '=';
+          } else if ( $display == 'multiple' ) {
+            $mq['compare'] = 'IN';
+          } else {
+            $mq['compare'] = $operator;
+          }
+          $query->query_vars['meta_query'][] = $mq;
+          $query->query_vars['meta_query']['relation'] = 'AND';
+          break;
+
+        default :
+          break;
       }
     }
-    
-    $query = apply_filters( 'jpress_acs_query', $query );
   }
+
+  return $query;
 }
 
 //plugin compatibility
