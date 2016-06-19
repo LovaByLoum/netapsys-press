@@ -118,6 +118,7 @@ function jpress_acs_input_column () {
 	global $current_screen, $wpdb;
   $pt = $current_screen->post_type;
   $acs_options = get_option( 'jpress_acs_options' );
+  $acs_settings = get_option( 'jpress_acs_settings' );
 
   if ( ! isset( $pt ) ){
     return false;
@@ -180,11 +181,19 @@ function jpress_acs_input_column () {
             }
             if ( $field == 'post_author' ) {
               $sql = "SELECT DISTINCT p.{$field}, u.display_name FROM {$table} as p INNER JOIN {$wpdb->users} as u ON p.post_author = u.ID";
-              $options = $wpdb->get_results( $sql );
+              if ( $acs_settings['use_transient'] == 1 ) {
+                $options = jpress_acs_get_options( 'get_results', $sql, $pt, $column_name );
+              } else {
+                $options = $wpdb->get_results( $sql );
+              }
               $html .= jpress_acs_render_select( $options, $current_value, false, false, array( 'key' => 'post_author', 'value' => 'display_name' ) );
             } else {
               $sql = "SELECT DISTINCT {$field} FROM {$table}";
-              $options = $wpdb->get_col( $sql );
+              if ( $acs_settings['use_transient'] == 1 ) {
+                $options = jpress_acs_get_options( 'get_col', $sql, $pt, $column_name );
+              } else {
+                $options = $wpdb->get_col( $sql );
+              }
               $html .= jpress_acs_render_select( $options, $current_value, true, false );
             }
             break;
@@ -205,7 +214,11 @@ function jpress_acs_input_column () {
             WHERE pm.meta_key = '" . $field . "'
             AND p.post_type ='" . $pt . "'
             ORDER BY pm.meta_value ASC";
-            $options = $wpdb->get_col( $sql );
+            if ( $acs_settings['use_transient'] == 1 ) {
+              $options = jpress_acs_get_options( 'get_col', $sql, $pt, $column_name );
+            } else {
+              $options = $wpdb->get_col( $sql );
+            }
             $html .= jpress_acs_render_select( $options, $current_value, true, false );
             break;
         }
@@ -236,6 +249,19 @@ function jpress_acs_input_column () {
   return $inputform;
 }
 
+function jpress_acs_get_options( $func, $sql, $pt, $col){
+  global $wpdb;
+
+  $trans = get_transient( 'acs_input_column_' . $pt . '_' . $col );
+  if ( $trans ) {
+    return $trans;
+  } else {
+    $results = $wpdb->$func( $sql );
+    set_transient( 'acs_input_column_' . $pt . '_' . $col, $results );
+    return $results;
+  }
+}
+
 //add filter form
 if ( is_admin() ) add_filter( 'parse_query', 'acs_admin_posts_filter' );
 function acs_admin_posts_filter ( $query ) {
@@ -258,7 +284,8 @@ function acs_admin_posts_filter ( $query ) {
 
       switch ( $type ){
         case 'basic-field' :
-          if ( $field == 'post_title' || $field == 'post_content' ){
+          if ( $field == 'post_title' || $field == 'post_content' || $field == 'post_excerpt' ){
+            $v = htmlentities( $v, ENT_QUOTES, 'utf-8' );
             $query->query_vars['s'] = $v;
           } else if ( $field == 'post_author' ) {
             if ( $display == 'multiple' ){
