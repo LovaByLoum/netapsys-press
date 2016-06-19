@@ -75,7 +75,7 @@ foreach ( $posts_types as $pt ):
   <div id="tabs-<?php echo $pt;?>">
     <div class="columns-left">
       <div id="titlediv">
-        <h2><?php echo $posttype->labels->name ;?><a href="<?php echo admin_url( '/edit.php?post_type=' ) . $pt ;?>" class="add-new-h2">Voir</a></h2>
+        <h2><?php echo $posttype->labels->name ;?><a href="<?php echo admin_url( '/edit.php?post_type=' ) . $pt ;?>" class="add-new-h2"><?php echo __("View", "jpress-admin-column-search" );?></a></h2>
       </div>
     </div>
 
