@@ -181,7 +181,7 @@ function jpress_acs_input_column () {
               }
             }
             if ( $field == 'post_author' ) {
-              $sql = "SELECT DISTINCT p.{$field}, u.display_name FROM {$table} as p INNER JOIN {$wpdb->users} as u ON p.post_author = u.ID";
+              $sql = "SELECT DISTINCT p.{$field}, u.display_name FROM {$table} as p INNER JOIN {$wpdb->users} as u ON p.post_author = u.ID WHERE p.post_type = '{$pt}'";
               if ( $acs_settings['use_transient'] == 1 ) {
                 $options = jpress_acs_get_options( 'get_results', $sql, $pt, $column_name );
               } else {
@@ -189,7 +189,7 @@ function jpress_acs_input_column () {
               }
               $html .= jpress_acs_render_select( $options, $current_value, false, false, array( 'key' => 'post_author', 'value' => 'display_name' ) );
             } else {
-              $sql = "SELECT DISTINCT {$field} FROM {$table}";
+              $sql = "SELECT DISTINCT {$field} FROM {$table} WHERE post_type = '{$pt}'";
               if ( $acs_settings['use_transient'] == 1 ) {
                 $options = jpress_acs_get_options( 'get_col', $sql, $pt, $column_name );
               } else {
