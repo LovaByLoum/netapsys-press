@@ -15,7 +15,7 @@ $wppi_plugins_custom = array(
   'Miscelaneous' => array(
     'apply-script',
     'jpress-archive',
-    'wp-admin-column-search',
+    'jpress-admin-column-search',
   ),
   'Performance & Security' => array(
     'gestion-de-cache',
