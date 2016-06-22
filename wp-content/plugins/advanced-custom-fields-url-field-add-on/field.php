@@ -277,7 +277,7 @@ if ( class_exists( 'acf_field' ) ){
       ?>
       <tr class="field_option field_option_<?php echo $this->name; ?>">
         <td class="label">
-          <label for=""><?php _e("Post Type",'acf'); ?> <?php _e( "(Lien interne)", 'acf-url' ); ?></label>
+          <label for=""><?php _e("Post Type",'acf'); ?> <?php _e( "(Internal link)", 'acf-url' ); ?></label>
         </td>
         <td>
           <?php

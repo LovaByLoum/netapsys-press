@@ -21,4 +21,11 @@ function acf_url_object_init() {
   include 'field.php';
 }
 
+//plugin register traduction
+add_action( 'plugins_loaded', 'acf_url_object_plugins_loaded' );
+function acf_url_object_plugins_loaded() {
+  //localisation
+  load_plugin_textdomain( 'acf-url', false, dirname( plugin_basename( __FILE__ ) ).'/languages/' );
+}
+
 ?>
