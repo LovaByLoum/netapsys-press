@@ -1,0 +1,85 @@
+.acf_flexible_content,
+.repeater {
+  clear: both;
+}
+
+.collapsed-repeater tr,
+.collapsed-repeater td {
+	display: none!important;
+}
+
+.collapsed-repeater  tr.first_tr {
+	display: table-row!important;
+}
+.collapsed-repeater  tr.first_tr td.label {
+    display: table-cell!important;
+    background: #f4f4f4;
+}
+.collapsed-repeater  tr.first_tr td.label span {
+    display: none;
+}
+.field_type-repeater tr.first_tr td.label label {
+    width: 95%;
+    display: inline-block;
+}
+.field_type-repeater tr.first_tr td.label:before {
+    right: 0;
+    content: "\f142";
+    border: none;
+    background: 0 0;
+    font: 400 20px/1 dashicons;
+    speak: none;
+    display: inline-block;
+    float: right;
+    padding: 0;
+    text-indent: 0;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: none!important;
+    width: 5%;
+}
+.collapsed-repeater  tr.first_tr td.label:before {
+    right: 0;
+    content: "\f140";
+    border: none;
+    background: 0 0;
+    font: 400 20px/1 dashicons;
+    speak: none;
+    display: inline-block;
+    float: right;
+    padding: 0;
+    text-indent: 0;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: none!important;
+    width: 5%;
+}
+
+.collapsed-repeater.acf_input {
+  position: relative;
+}
+
+/* "Masks" the first field in order to prevent clicking on it */
+.collapsed-repeater.acf_input:after {
+	position: absolute;
+	top: 0; bottom: 0; left: 0px; right: 0;
+	display: block;
+	content: ' ';
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba( 244, 244, 244, .2 )), to(rgba( 244, 244, 244, 1 )));
+	background: -o-linear-gradient( rgba( 244, 244, 244, .2 ), rgba( 244, 244, 244, 1 ) );
+	background: -moz-linear-gradient( rgba( 244, 244, 244, .2 ), rgba( 244, 244, 244, 1 ) );
+	background: -webkit-linear-gradient( rgba( 244, 244, 244, .2 ), rgba( 244, 244, 244, 1 ) );
+	background: linear-gradient( rgba( 244, 244, 244, .2 ), rgba( 244, 244, 244, 1 ) );
+}
+
+.collapsed-repeater  tr.first_tr td.label {
+  position: relative;
+  z-index: 10;
+}
+
+.acf_input.collapsed-repeater .label label,
+.acf_input.collapsed-repeater .label {
+  cursor: row-resize;
+}
