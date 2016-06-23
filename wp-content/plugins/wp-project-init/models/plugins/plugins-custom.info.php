@@ -16,6 +16,7 @@ $wppi_plugins_custom = array(
     'apply-script',
     'jpress-archive',
     'jpress-admin-column-search',
+    'acf-repeater-collapser-admin',
   ),
   'Performance & Security' => array(
     'gestion-de-cache',
