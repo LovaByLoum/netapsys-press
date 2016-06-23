@@ -190,29 +190,7 @@ if ( class_exists( 'acf_field' ) ){
         <input type="hidden" name="<?php echo $field['name'];?>" value="" class="acf_url_true_value">
         <table class="acf_input widefat">
           <tbody>
-          <tr class="acf_url_field_block">
-            <td class="label">
-              <label for=""><?php echo __("URL", "acf-url");?></label>
-              <input type="hidden" name="<?php echo $field['name'];?>" value="" class="acf_url_true_value">
-            </td>
-            <td>
-              <ul class="acf_url_field_choice radio_list radio horizontal">
-                <li><label><input type="radio" name="choice_<?php echo $field['id'];?>[]" value="1" <?php if( $internal ): ?>checked="checked"<?php endif;?>><?php echo __( "Internal", 'acf-url');?></label></li>
-                <li><label><input type="radio" name="choice_<?php echo $field['id'];?>[]" value="0" <?php if( ! $internal ): ?>checked="checked"<?php endif;?>><?php echo __( "External", 'acf-url');?></label></li>
-              </ul>
-              <div class="acf_url_field_internal">
-                <?php
-                // create field
-                do_action( 'acf/create_field', $field );
-                ?>
-              </div>
-              <div class="acf_url_field_external">
-                <input type="text" value="<?php echo ( ( $internal ) ? 'http://' : $value );?>" id="text-' . $field['id'] . '" class="<?php echo $field['class']; ?>" />
-                <span><?php echo __('Please specify the http://', "acf-url" ); ?></span>
-              </div>
-            </td>
-          </tr>
-          <tr>
+          <tr  class="first_tr">
             <td class="label"><label><?php echo __( "Label", 'acf-url');?></label></td>
             <td>
               <?php
@@ -242,6 +220,28 @@ if ( class_exists( 'acf_field' ) ){
               }
               ?>
               <input type="text" class="acf_url_label" value="<?php echo $label;?>" />
+            </td>
+          </tr>
+          <tr class="acf_url_field_block">
+            <td class="label">
+              <label for=""><?php echo __("URL", "acf-url");?></label>
+              <input type="hidden" name="<?php echo $field['name'];?>" value="" class="acf_url_true_value">
+            </td>
+            <td>
+              <ul class="acf_url_field_choice radio_list radio horizontal">
+                <li><label><input type="radio" name="choice_<?php echo $field['id'];?>[]" value="1" <?php if( $internal ): ?>checked="checked"<?php endif;?>><?php echo __( "Internal", 'acf-url');?></label></li>
+                <li><label><input type="radio" name="choice_<?php echo $field['id'];?>[]" value="0" <?php if( ! $internal ): ?>checked="checked"<?php endif;?>><?php echo __( "External", 'acf-url');?></label></li>
+              </ul>
+              <div class="acf_url_field_internal">
+                <?php
+                // create field
+                do_action( 'acf/create_field', $field );
+                ?>
+              </div>
+              <div class="acf_url_field_external">
+                <input type="text" value="<?php echo ( ( $internal ) ? 'http://' : $value );?>" id="text-' . $field['id'] . '" class="<?php echo $field['class']; ?>" />
+                <span><?php echo __('Please specify the http://', "acf-url" ); ?></span>
+              </div>
             </td>
           </tr>
           </tbody>
