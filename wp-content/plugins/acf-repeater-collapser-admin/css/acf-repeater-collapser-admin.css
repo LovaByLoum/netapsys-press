@@ -24,6 +24,7 @@
 }
 .field_type-repeater tr.first_tr > td.label:before {
     right: 0;
+    cursor: pointer;
     content: "\f506";
     border: none;
     background: 0 0;
@@ -41,6 +42,7 @@
 }
 .collapsed-repeater  tr.first_tr td.label:before {
     right: 0;
+    cursor: pointer;
     content: "\f211";
     border: none;
     background: 0 0;
