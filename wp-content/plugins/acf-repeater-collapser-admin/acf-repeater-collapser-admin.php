@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ACF Fields Repeater Collapser Admin
- * Plugin URI: https://github.com/mrwweb/ACF-Repeater-Collapser
+ * Plugin URI: http://netapsys.fr
  * Description: Add collapse and expand feature for repeater field instances for better sorting.
  * Author: Johary Ranarimanana
  */
