@@ -22,9 +22,9 @@
     width: 95%;
     display: inline-block;
 }
-.field_type-repeater tr.first_tr td.label:before {
+.field_type-repeater tr.first_tr > td.label:before {
     right: 0;
-    content: "\f142";
+    content: "\f343";
     border: none;
     background: 0 0;
     font: 400 20px/1 dashicons;
@@ -41,7 +41,7 @@
 }
 .collapsed-repeater  tr.first_tr td.label:before {
     right: 0;
-    content: "\f140";
+    content: "\f347";
     border: none;
     background: 0 0;
     font: 400 20px/1 dashicons;
