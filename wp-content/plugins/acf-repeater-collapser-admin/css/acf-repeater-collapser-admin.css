@@ -24,7 +24,7 @@
 }
 .field_type-repeater tr.first_tr > td.label:before {
     right: 0;
-    content: "\f343";
+    content: "\f506";
     border: none;
     background: 0 0;
     font: 400 20px/1 dashicons;
@@ -41,7 +41,7 @@
 }
 .collapsed-repeater  tr.first_tr td.label:before {
     right: 0;
-    content: "\f347";
+    content: "\f211";
     border: none;
     background: 0 0;
     font: 400 20px/1 dashicons;
