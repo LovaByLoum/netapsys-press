@@ -14,10 +14,9 @@ jQuery(document).ready(function($) {
         _this = $(this);
         _parent =  $(this).parents('.acf_input').eq(0);
         var _value = "";
-        _parent.find('input[type=text]:visible').each(function(){
-            if ( jQuery(this).val() !="" ){
+        _parent.find('input[type=text]').each(function(){
+            if ( _value == "" && jQuery(this).val() != "" ){
                 _value = jQuery(this).val();
-                return;
             }
         });
         _parent.toggleClass('collapsed-repeater');

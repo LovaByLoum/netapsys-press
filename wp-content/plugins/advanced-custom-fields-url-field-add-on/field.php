@@ -188,9 +188,9 @@ if ( class_exists( 'acf_field' ) ){
       ?>
       <div class="acf_url_field_block">
         <input type="hidden" name="<?php echo $field['name'];?>" value="" class="acf_url_true_value">
-        <table class="acf_input widefat">
+        <table class="widefat">
           <tbody>
-          <tr  class="first_tr">
+          <tr>
             <td class="label"><label><?php echo __( "Label", 'acf-url');?></label></td>
             <td>
               <?php
@@ -239,7 +239,7 @@ if ( class_exists( 'acf_field' ) ){
                 ?>
               </div>
               <div class="acf_url_field_external">
-                <input type="text" value="<?php echo ( ( $internal ) ? 'http://' : $value );?>" id="text-' . $field['id'] . '" class="<?php echo $field['class']; ?>" />
+                <input type="text" value="<?php echo ( ( $internal ) ? '' : $value );?>" id="text-' . $field['id'] . '" class="<?php echo $field['class']; ?>" />
                 <span><?php echo __('Please specify the http://', "acf-url" ); ?></span>
               </div>
             </td>
