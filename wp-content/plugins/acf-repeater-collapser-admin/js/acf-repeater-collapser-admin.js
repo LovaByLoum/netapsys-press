@@ -13,7 +13,13 @@ jQuery(document).ready(function($) {
     $(".field_type-repeater .repeater .acf-input-table.row_layout > tbody > tr.row > .acf_input-wrap > .acf_input > tbody > tr:first-child > td.label").live("click", function(){
         _this = $(this);
         _parent =  $(this).parents('.acf_input').eq(0);
-        var _value = _parent.find('input[type=text][value!=""]:visible').eq(0).val();
+        var _value = "";
+        _parent.find('input[type=text]:visible').each(function(){
+            if ( jQuery(this).val() !="" ){
+                _value = jQuery(this).val();
+                return;
+            }
+        });
         _parent.toggleClass('collapsed-repeater');
         if ( _parent.hasClass('collapsed-repeater') ) {
             if ( _value ) {
