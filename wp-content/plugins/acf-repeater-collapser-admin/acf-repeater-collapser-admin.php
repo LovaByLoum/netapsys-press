@@ -4,6 +4,7 @@
  * Plugin URI: http://netapsys.fr
  * Description: Add collapse and expand feature for repeater field instances for better sorting.
  * Author: Johary Ranarimanana
+ * Version: 1.0.0
  */
 
 /* Load the javascript and CSS files on the ACF admin pages */
