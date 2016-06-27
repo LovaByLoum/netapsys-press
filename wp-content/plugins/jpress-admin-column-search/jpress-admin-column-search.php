@@ -11,6 +11,8 @@
  * Domain Path: /languages/
 */
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 //add an admin page menu
 add_action( 'admin_menu', 'jpress_acs_add_custom_admin_page' );
 function jpress_acs_add_custom_admin_page () {
@@ -39,16 +41,16 @@ function jpress_acs_init () {
   }
 
   //admin styles
-  wp_enqueue_style( 'jpress-acs-style', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/acs-styles.css' );
-  wp_enqueue_style( 'jpress-acs-ui', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/acs-ui.css' );
-  wp_enqueue_style( 'jpress-acs-date-picker', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/jquery-ui-datepicker.css' );
-  wp_enqueue_style( 'jpress-acs-multiselect', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/css/jquery.multiselect.css' );
+  wp_enqueue_style( 'jpress-acs-style', plugins_url( '/assets/css/acs-styles.css', __FILE__ ) );
+  wp_enqueue_style( 'jpress-acs-ui', plugins_url( '/assets/css/acs-ui.css', __FILE__ ) );
+  wp_enqueue_style( 'jpress-acs-date-picker', plugins_url( '/assets/css/jquery-ui-datepicker.css', __FILE__ ) );
+  wp_enqueue_style( 'jpress-acs-multiselect', plugins_url( '/assets/css/jquery.multiselect.css', __FILE__ ) );
 
   //admin script
-  wp_enqueue_script( 'jpress-acs-script', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/acs-script.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-tabs' ) );
-  wp_enqueue_script( 'jpress-acs-date-picker', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/jquery.ui.datepicker.js', array( 'jquery' ) );
-  wp_enqueue_script( 'jpress-acs-date-picker-fr', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/jquery.ui.datepicker-fr.js', array( 'jquery' ) );
-  wp_enqueue_script( 'jpress-acs-multiselect', plugins_url( basename( dirname( __FILE__) ) ) . '/assets/js/jquery.multiselect.js', array( 'jquery' ) );
+  wp_enqueue_script( 'jpress-acs-script', plugins_url( '/assets/js/acs-script.js', __FILE__ ), array( 'jquery', 'jquery-ui-sortable', 'jquery-ui-tabs' ) );
+  wp_enqueue_script( 'jpress-acs-date-picker', plugins_url( '/assets/js/jquery.ui.datepicker.js', __FILE__ ), array( 'jquery' ) );
+  wp_enqueue_script( 'jpress-acs-date-picker-fr', plugins_url( '/assets/js/jquery.ui.datepicker-fr.js', __FILE__ ), array( 'jquery' ) );
+  wp_enqueue_script( 'jpress-acs-multiselect', plugins_url( '/assets/js/jquery.multiselect.js', __FILE__ ), array( 'jquery' ) );
 
 }
 //callback for manage columns values for all post type
@@ -102,9 +104,9 @@ function jpress_acs_render_select( $options, $selected, $has_no_key = false, $ec
     if ( empty( $label ) ) continue;
 
     if ( is_array( $selected ) ){
-      $html .= '<option value="' . ( $value ) . '" ' . ( in_array( $value, $selected ) ? 'selected' : '' ) . '>' . $label . '</option>' ;
+      $html .= '<option value="' . esc_attr( $value ) . '" ' . ( in_array( $value, $selected ) ? 'selected' : '' ) . '>' . esc_html( $label ) . '</option>' ;
     } else {
-      $html .= '<option value="' . ( $value ) . '" ' . ( ( isset($selected) && !empty( $selected ) && $selected == $value ) ? 'selected' : '' ) . '>' . $label . '</option>' ;
+      $html .= '<option value="' . esc_attr( $value ) . '" ' . ( ( isset($selected) && !empty( $selected ) && $selected == $value ) ? 'selected' : '' ) . '>' . esc_html( $label ) . '</option>' ;
     }
   }
   if ( $echo ) {
@@ -155,7 +157,7 @@ function jpress_acs_input_column () {
     //current search value
     $current_value = '';
     if ( isset( $_GET['acs_search'] ) ) {
-      $current_value = $_GET['acs_search'][$column_name];
+      $current_value = esc_attr( $_GET['acs_search'][$column_name] );
     }
 
     $html = '';
@@ -181,19 +183,19 @@ function jpress_acs_input_column () {
               }
             }
             if ( $field == 'post_author' ) {
-              $sql = "SELECT DISTINCT p.{$field}, u.display_name FROM {$table} as p INNER JOIN {$wpdb->users} as u ON p.post_author = u.ID WHERE p.post_type = '{$pt}'";
+              $sql = "SELECT DISTINCT p.{$field}, u.display_name FROM {$table} as p INNER JOIN {$wpdb->users} as u ON p.post_author = u.ID WHERE p.post_type = %s";
               if ( $acs_settings['use_transient'] == 1 ) {
                 $options = jpress_acs_get_options( 'get_results', $sql, $pt, $column_name );
               } else {
-                $options = $wpdb->get_results( $sql );
+                $options = $wpdb->get_results( $wpdb->prepare( $sql, $pt ) );
               }
               $html .= jpress_acs_render_select( $options, $current_value, false, false, array( 'key' => 'post_author', 'value' => 'display_name' ) );
             } else {
-              $sql = "SELECT DISTINCT {$field} FROM {$table} WHERE post_type = '{$pt}'";
+              $sql = "SELECT DISTINCT {$field} FROM {$table} WHERE post_type = %s";
               if ( $acs_settings['use_transient'] == 1 ) {
                 $options = jpress_acs_get_options( 'get_col', $sql, $pt, $column_name );
               } else {
-                $options = $wpdb->get_col( $sql );
+                $options = $wpdb->get_col( $wpdb->prepare( $sql, $pt ) );
               }
               $html .= jpress_acs_render_select( $options, $current_value, true, false );
             }
@@ -210,15 +212,15 @@ function jpress_acs_input_column () {
             $html .= jpress_acs_render_select( $terms, $current_value, true, false, array( 'key' => 'term_id', 'value' => 'name' ) );
             break;
           case 'custom-field' :
-            $sql = "SELECT DISTINCT pm.meta_value FROM {$wpdb->prefix}postmeta AS pm
-            INNER JOIN {$wpdb->prefix}posts AS p ON ( p.ID = pm.post_id )
-            WHERE pm.meta_key = '" . $field . "'
-            AND p.post_type ='" . $pt . "'
+            $sql = "SELECT DISTINCT pm.meta_value FROM {$wpdb->postmeta} AS pm
+            INNER JOIN {$wpdb->posts} AS p ON ( p.ID = pm.post_id )
+            WHERE pm.meta_key = %s
+            AND p.post_type = %s
             ORDER BY pm.meta_value ASC";
             if ( $acs_settings['use_transient'] == 1 ) {
               $options = jpress_acs_get_options( 'get_col', $sql, $pt, $column_name );
             } else {
-              $options = $wpdb->get_col( $sql );
+              $options = $wpdb->get_col( $wpdb->prepare( $sql, $field, $pt ) );
             }
             $html .= jpress_acs_render_select( $options, $current_value, true, false );
             break;
@@ -258,7 +260,7 @@ function jpress_acs_get_options( $func, $sql, $pt, $col){
   if ( $trans ) {
     return $trans;
   } else {
-    $results = $wpdb->$func( $sql );
+    $results = $wpdb->$func( $wpdb->prepare( $sql ) );
     set_transient( 'acs_input_column_' . $pt . '_' . $col, $results );
     return $results;
   }

@@ -3,9 +3,10 @@
  * setttings tab
  */
 
-if( isset( $_POST["acssubmit_settings"] ) ) {
+if( isset( $_POST["acssubmit_settings"] ) && current_user_can( 'manage_options' ) ) {
   unset($_POST["acssubmit_settings"]);
-  update_option( 'jpress_acs_settings', $_POST );
+  $post_data = esc_sql( $_POST );
+  update_option( 'jpress_acs_settings', $post_data );
 }
 
 $acs_settings = get_option( 'jpress_acs_settings' );
