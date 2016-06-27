@@ -1,7 +1,7 @@
 <?php
 /*
-* Plugin Name: Advanced Custom Fields - URL Field add-on
-* Description: This plugin is an add-on for Advanced Custom Fields. It allows you to choose URL between posts link and external link
+* Plugin Name: ACF - URL Field add-on
+* Description: This plugin is an add-on for ACF. It allows you to choose URL between posts link and external link
 * Author:      Johary Ranarimanana
 * Plugin URI: http://netapsys.fr
 * Version:     1.0

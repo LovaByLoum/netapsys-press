@@ -1,4 +1,4 @@
-=== Advanced Custom Fields - URL Field Add-On ===
+=== ACF - URL Field Add-On ===
 Contributors: joharyjoox
 Tags: custom field, acf, link field
 Requires at least: 4.0
