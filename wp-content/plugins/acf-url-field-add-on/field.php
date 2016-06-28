@@ -14,12 +14,12 @@ if ( class_exists( 'acf_field' ) ){
     }
 
 
-  /*--------------------------------------------------------------------------------------
-  *
-  *	create_field
-  *
-  *
-  *-------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------
+    *
+    *	create_field
+    *
+    *
+    *-------------------------------------------------------------------------------------*/
 
     function create_field( $field )
     {
@@ -36,7 +36,7 @@ if ( class_exists( 'acf_field' ) ){
       $defaults = array(
         'multiple'		=>	0,
         'post_type' 	=>	false,
-        'taxonomy' 		=>	array( 'all' ),
+        'taxonomy' 		=>	false,
         'allow_null'	=>	0,
       );
 
@@ -47,8 +47,14 @@ if ( class_exists( 'acf_field' ) ){
       // validate taxonomy
       if( ! is_array( $field['taxonomy'] ) )
       {
-        $field['taxonomy'] = array( 'all' );
+        $field['taxonomy'] = false;
       }
+
+      if( is_array( $field['taxonomy'] ) && in_array( 'none', $field['taxonomy'] ) )
+      {
+        $field['taxonomy'] = false;
+      }
+
 
       // load all post types by default
       if( ! $field['post_type'] || ! is_array( $field['post_type'] ) || $field['post_type'][0] == "" )
@@ -56,51 +62,10 @@ if ( class_exists( 'acf_field' ) ){
         $field['post_type'] = apply_filters( 'acf/get_post_types', array() );
       }
 
-
-      // create tax queries
-      if( ! in_array( 'all', $field['taxonomy'] ) )
-      {
-        // vars
-        $taxonomies = array();
-        $args['tax_query'] = array();
-
-        foreach( $field['taxonomy'] as $v )
-        {
-
-          // find term (find taxonomy!)
-          // $term = array( 0 => $taxonomy, 1 => $term_id )
-          $term = explode(':', $v);
-
-          // validate
-          if( ! is_array($term) || ! isset($term[1]) )
-          {
-            continue;
-          }
-
-
-          // add to tax array
-          $taxonomies[ $term[0] ][] = $term[1];
-
-        }
-
-
-        // now create the tax queries
-        foreach( $taxonomies as $k => $v )
-        {
-          $args['tax_query'][] = array(
-            'taxonomy' => $k,
-            'field' => 'id',
-            'terms' => $v,
-          );
-        }
-      }
-
-
       // Change Field into a select
       $field['type'] = 'select';
       $field['choices'] = array();
       $field['optgroup'] = false;
-
 
       foreach( $field['post_type'] as $post_type )
       {
@@ -152,9 +117,9 @@ if ( class_exists( 'acf_field' ) ){
             }
 
             // add to choices
-            if( count( $field['post_type'] ) == 1 )
+            if( count( $field['post_type'] ) == 1 && $field['taxonomy'] == false )
             {
-              $field['choices'][ $post->ID ] = $title;
+              $field['choices'][ 'post-' . $post->post_type . '-' . $post->ID ] = $title;
             }
             else
             {
@@ -162,7 +127,7 @@ if ( class_exists( 'acf_field' ) ){
               $post_type_object = get_post_type_object( $post->post_type );
               $post_type_name = $post_type_object->labels->name;
 
-              $field['choices'][$post_type_name][$post->ID] = $title;
+              $field['choices'][$post_type_name][ 'post-' . $post->post_type . '-' . $post->ID] = $title;
               $field['optgroup'] = true;
             }
 
@@ -171,6 +136,20 @@ if ( class_exists( 'acf_field' ) ){
           // foreach( $posts as $post )
         }
         // if($posts)
+      }
+
+      //add tax link
+      foreach( $field['taxonomy'] as $taxonomy )
+      {
+        if ( taxonomy_exists( $taxonomy ) ){
+          $tax_object = get_taxonomy( $taxonomy );
+          $tax_name = $tax_object->labels->name;
+
+          $terms = get_terms($taxonomy, array('get' => 'all', 'orderby' => 'id'));
+          foreach ( $terms as $term ){
+            $field['choices'][$tax_name]['tax-' . $taxonomy . '-' . $term->term_id] = $term->name;
+          }
+        }
       }
       // foreach( $field['post_type'] as $post_type )
 
@@ -184,7 +163,7 @@ if ( class_exists( 'acf_field' ) ){
         $value = $field['value'];
         $label = "";
       }
-      $internal= ( is_numeric( $field['value'] ) && strpos( $field['value'], "http" ) == false );
+      $internal= ( preg_match( '!^(post|tax)-(.*?)-([0-9]+)$!', $field['value'] ) && strpos( $field['value'], "http" ) == false );
       ?>
       <div class="acf_url_field_block">
         <input type="hidden" name="<?php echo $field['name'];?>" value="" class="acf_url_true_value">
@@ -239,7 +218,7 @@ if ( class_exists( 'acf_field' ) ){
                 ?>
               </div>
               <div class="acf_url_field_external">
-                <input type="text" value="<?php echo ( ( $internal ) ? '' : $value );?>" id="text-' . $field['id'] . '" class="<?php echo $field['class']; ?>" />
+                <input type="text" value="<?php echo ( ( $internal ) ? '' : $value );?>" id="text-<?php echo $field['id'];?>" class="<?php echo $field['class']; ?>" />
                 <span><?php echo __('Please specify the http://', "acf-url" ); ?></span>
               </div>
             </td>
@@ -277,7 +256,7 @@ if ( class_exists( 'acf_field' ) ){
       ?>
       <tr class="field_option field_option_<?php echo $this->name; ?>">
         <td class="label">
-          <label for=""><?php _e("Post Type",'acf'); ?> <?php _e( "(Internal link)", 'acf-url' ); ?></label>
+          <label for=""><?php _e("Post Type",'acf-url'); ?> <?php _e( "(Internal link)", 'acf-url' ); ?></label>
         </td>
         <td>
           <?php
@@ -285,7 +264,6 @@ if ( class_exists( 'acf_field' ) ){
             ''	=>	__( "All", 'acf' )
           );
           $choices = apply_filters( 'acf/get_post_types', $choices );
-
 
           do_action( 'acf/create_field', array(
             'type'	=>	'select',
@@ -300,24 +278,32 @@ if ( class_exists( 'acf_field' ) ){
       </tr>
       <tr class="field_option field_option_<?php echo $this->name; ?>">
         <td class="label">
-          <label><?php _e( "Filter from Taxonomy", 'acf' ); ?></label>
+          <label><?php _e( "Taxonomy", 'acf' ); ?> <?php _e( "(Internal link)", 'acf-url' ); ?></label>
         </td>
         <td>
           <?php
           $choices = array(
-            '' => array(
-              'all' => __( "All", 'acf' )
-            )
+            'none' => __( "None", 'acf' )
           );
-          $simple_value = false;
-          $choices = apply_filters( 'acf/get_taxonomies_for_select', $choices, $simple_value );
+          //add taxonomie link
+          $taxonomies = get_taxonomies( array(), 'objects' );
+          $ignore = array( 'post_format', 'nav_menu', 'link_category' );
+
+          foreach( $taxonomies as $taxonomy )
+          {
+            if( in_array($taxonomy->name, $ignore) )
+            {
+              continue;
+            }
+            $choices[ $taxonomy->name ] = $taxonomy->name;
+          }
+
 
           do_action( 'acf/create_field', array(
             'type'	=>	'select',
             'name'	=>	'fields['.$key.'][taxonomy]',
             'value'	=>	$field['taxonomy'],
             'choices' => $choices,
-            'optgroup' => true,
             'multiple'	=>	1,
           ) );
 
@@ -351,12 +337,12 @@ if ( class_exists( 'acf_field' ) ){
 
     /*--------------------------------------------------------------------------------------
     *
-    *	get_value_for_api
+    *	format_value_for_api
     *
     *
     *-------------------------------------------------------------------------------------*/
 
-    /*function get_value_for_api( $post_id, $field )
+    function format_value_for_api( $value, $post_id, $field )
     {
       // get value
       //$value = parent::get_value( $post_id, $field );
@@ -377,14 +363,25 @@ if ( class_exists( 'acf_field' ) ){
 
       // external / internal
       if( is_array( $value ) && isset( $value['link'] ) ) {
-        $post_id = $value['link'];
-        if( is_numeric( $post_id ) ) {
-          $post = get_post( $post_id );
-          $url = get_permalink( $post->ID );
-          $value['link']= $url;
-          if( empty( $value['label'] ) ) {
-            $label = $post->post_title;
-            $value['label'] = $label;
+        $link = $value['link'];
+        $internal= ( preg_match( '!^(post|tax)-(.*?)-([0-9]+)$!', $link, $matches ) && strpos( $link, "http" ) == false );
+        if( $internal && $matches ) {
+          $type = $matches[1];
+          $object = $matches[2];
+          $id = $matches[3];
+          if ( $type == 'post' ){
+            $post = get_post( intval($id) );
+            $url = get_permalink( $post->ID );
+            $value['link']= $url;
+            $title = $post->post_title;
+          } else if ( $type == 'tax' ) {
+            $term = get_term( intval($id), $object );
+            $url = get_term_link( $term->term_id, $object );
+            $value['link']= $url;
+            $title = $term->name;
+          }
+          if( empty( $value['label'] ) && $title ) {
+            $value['label'] = $title;
           }
         }
       }
@@ -392,7 +389,7 @@ if ( class_exists( 'acf_field' ) ){
 
       // return the value
       return $value;
-    }*/
+    }
 
     /*--------------------------------------------------------------------------------------
     *
