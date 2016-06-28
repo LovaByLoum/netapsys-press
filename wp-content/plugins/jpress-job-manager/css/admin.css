@@ -1,0 +1,22 @@
+table.bordered,
+table.bordered thead th,
+table.bordered tbody th,
+table.bordered tbody td
+{
+    border: 1px #ddd solid;
+    padding : 10px;
+    text-align: center;
+}
+table.bordered thead th,
+table.bordered tbody th{
+    background-color: #ccc;
+}
+
+table.bordered tbody tr.light td{
+    background-color: #ddd;
+}
+
+#the-list .taxonomy-type-contrat a{
+    border-radius: 5px;
+    padding: 5px 30px;
+}
