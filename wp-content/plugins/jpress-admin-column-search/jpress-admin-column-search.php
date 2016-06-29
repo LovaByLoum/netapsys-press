@@ -266,6 +266,21 @@ function jpress_acs_get_options( $func, $sql, $pt, $col){
   }
 }
 
+function jpress_sanitize_all( $data ){
+
+  // Initialize the new array that will hold the sanitize values
+  $new_input = array();
+  // Loop through the input and sanitize each of the values
+  foreach ( $data as $key => $val ) {
+    if ( is_array( $data[$key] ) ){
+      $new_input[$key] = jpress_sanitize_all( $data[$key] );
+    } else {
+      $new_input[$key] = sanitize_text_field( $val );
+    }
+  }
+  return $new_input;
+}
+
 //add filter form
 if ( is_admin() ) add_filter( 'parse_query', 'acs_admin_posts_filter' );
 function acs_admin_posts_filter ( $query ) {

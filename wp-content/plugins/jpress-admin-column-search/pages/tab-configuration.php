@@ -9,9 +9,11 @@ wp_enqueue_script( 'accordion' );
 
 if( isset( $_POST["acssubmit"] )  && current_user_can( 'manage_options' ) ) {
   unset($_POST["acssubmit"]);
-  $post_data = esc_sql( $_POST );
-  update_option( 'jpress_acs_options', $post_data );
-  jpress_refresh_transient();
+  $post_data = jpress_sanitize_all( $_POST );
+  if ( isset( $post_data['enable'] ) && isset( $post_data['type'] ) && isset( $post_data['field'] ) && isset( $post_data['display'] ) && isset( $post_data['operator'] ) ){
+    update_option( 'jpress_acs_options', $post_data );
+    jpress_refresh_transient();
+  }
 }
 
 $acs_options = get_option( 'jpress_acs_options' );

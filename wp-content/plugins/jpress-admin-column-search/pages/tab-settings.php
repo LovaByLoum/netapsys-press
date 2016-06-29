@@ -5,7 +5,7 @@
 
 if( isset( $_POST["acssubmit_settings"] ) && current_user_can( 'manage_options' ) ) {
   unset($_POST["acssubmit_settings"]);
-  $post_data = esc_sql( $_POST );
+  $post_data = jpress_sanitize_all( $_POST );
   update_option( 'jpress_acs_settings', $post_data );
 }
 
