@@ -1,12 +1,10 @@
 jQuery(document).ready(function(){
-    jQuery('.acf_url_field_choice').livequery(function(){
-      jQuery(".acf_url_field_choice input").each(function(){
+    jQuery('.acf_url_field_block table').livequery(function(){
+      _this = jQuery(this);
+      jQuery("input", _this).each(function(){
           acf_url_field_toggle(jQuery(this));
       });
-      jQuery(".acf_url_field_choice input").live('click',function(){
-          acf_url_field_toggle(jQuery(this));
-      });
-      jQuery(".acf_url_field_internal select,.acf_url_field_external input,.acf_url_label").live('change',function(){
+      jQuery("select,input", _this).change(function(){
           acf_url_field_toggle(jQuery(this));
       });
     });
