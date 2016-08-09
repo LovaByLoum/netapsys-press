@@ -6,7 +6,7 @@
  * Description: Add an advanced data search and filter on admin page list content for each declared columns
  * Author: Johary Ranarimanana (Netapsys)
  * Author URI: http://www.netapsys.fr/
- * Version: 1.0.1
+ * Version: 1.1.1
  * License: GPLv2 or later
  * Domain Path: /languages/
 */

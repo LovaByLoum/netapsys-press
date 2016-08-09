@@ -31,13 +31,13 @@ jQuery( document ).ready( function() {
     if( jQuery( '.wp-list-table thead' ).find( '.acs_input_cible' ).length > 0 ) {
         var td = '';
         var classes;
-        for ( i = 1; i <= jQuery( '.wp-list-table thead tr th' ).length; i++ ) {
-            classes = jQuery( '.wp-list-table thead tr th' ).eq( i-1 ).attr( 'class' );
+        for ( i = 1; i <= jQuery( '.wp-list-table thead tr th, .wp-list-table thead tr td' ).length; i++ ) {
+            classes = jQuery( '.wp-list-table thead tr th, .wp-list-table thead tr td' ).eq( i-1 ).attr( 'class' );
             classes = classes.match( /column-([a-z0-9_-]+)/ );
             td += '<td class="column-' + classes[1] + '"></td>';
         }
         jQuery( '<tr class="acs_row">' + td + '</tr>' ).insertBefore( jQuery( '.wp-list-table tbody tr:first' ) );
-        jQuery( '.wp-list-table thead tr th' ).each( function( index ) {
+        jQuery( '.wp-list-table thead tr th,.wp-list-table thead tr td' ).each( function( index ) {
             if( jQuery( this ).find( '.acs_input_cible' ).length > 0 ) {
                 column = jQuery(this).find( '.acs_input_cible' ).data( 'col' );
                 input_form = jQuery(this).find( '.acs_input_cible > *' );
