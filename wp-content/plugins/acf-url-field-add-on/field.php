@@ -371,14 +371,24 @@ if ( class_exists( 'acf_field' ) ){
           $id = $matches[3];
           if ( $type == 'post' ){
             $post = get_post( intval($id) );
-            $url = get_permalink( $post->ID );
+            if  ( isset($post) && $post->ID > 0 ){
+              $url = get_permalink( $post->ID );
+              $title = $post->post_title;
+            }else {
+              $url = '';
+              $title = '';
+            }
             $value['link']= $url;
-            $title = $post->post_title;
           } else if ( $type == 'tax' ) {
             $term = get_term( intval($id), $object );
-            $url = get_term_link( $term->term_id, $object );
+            if  ( isset($term) && $term->term_id > 0 ){
+              $url = get_term_link( $term->term_id, $object );
+              $title = $term->name;
+            } else {
+              $url = '';
+              $title = '';
+            }
             $value['link']= $url;
-            $title = $term->name;
           }
           if( empty( $value['label'] ) && $title ) {
             $value['label'] = $title;
