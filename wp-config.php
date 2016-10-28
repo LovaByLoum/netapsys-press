@@ -14,8 +14,18 @@
  * @package WordPress
  */
 
-$host = $_SERVER['HTTP_HOST'];
+$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
 $appPath = dirname (__FILE__) . DIRECTORY_SEPARATOR;
 define("SERVERCONFIG", $host);
 define ("BASEPATH", dirname (__FILE__));
 require_once( $appPath . 'wp-config' . DIRECTORY_SEPARATOR . SERVERCONFIG . DIRECTORY_SEPARATOR .  "wp-config.php" );
+
+
+/* C'est tout, ne touchez pas à ce qui suit ! Bon blogging ! */
+
+/** Chemin absolu vers le dossier de WordPress. */
+if ( !defined('ABSPATH') )
+  define('ABSPATH', dirname(__FILE__) . '/');
+
+/** Réglage des variables de WordPress et de ses fichiers inclus. */
+require_once(ABSPATH . 'wp-settings.php');

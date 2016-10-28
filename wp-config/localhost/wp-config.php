@@ -80,12 +80,3 @@ $table_prefix  = 'wp_';
 define('WP_DEBUG', false);
 
 define('DISABLE_WP_CRON', true);
-
-/* C'est tout, ne touchez pas à ce qui suit ! Bon blogging ! */
-
-/** Chemin absolu vers le dossier de WordPress. */
-if ( !defined('ABSPATH') )
-  define('ABSPATH', dirname(__FILE__) . '/');
-
-/** Réglage des variables de WordPress et de ses fichiers inclus. */
-require_once(ABSPATH . 'wp-settings.php');
