@@ -13,6 +13,7 @@ require_once('models/plugins/plugins.info.php');
 require_once('models/plugins/plugins-custom.info.php');
 require_once('models/plugins/plugins-premium.info.php');
 require_once('inc/zipper.php');
+require_once('inc/wp-cli-class.php');
 
 class WP_Project_Init{
 	
