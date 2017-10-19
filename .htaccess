@@ -54,3 +54,15 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . %{ENV:PROJECT_BASE_PATH}index.php [L]
 </IfModule>
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /projets/netapsys-press/srcs/
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /projets/netapsys-press/srcs/index.php [L]
+</IfModule>
+
+# END WordPress

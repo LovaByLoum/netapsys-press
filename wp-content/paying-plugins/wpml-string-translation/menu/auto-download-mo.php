@@ -1,4 +1,5 @@
 <?php 
+global $sitepress, $WPML_ST_MO_Downloader;
 
 $language = isset($_GET['download_mo']) ? $_GET['download_mo']  : false;
 $active_languages = $sitepress->get_active_languages();
@@ -11,9 +12,10 @@ if(isset($_POST['action']) && $_POST['action']=='icl_admo_add_translations' && w
         $new_translations = unserialize(base64_decode($_POST['add_new']));        
         foreach($new_translations as $tr){
             $translations_add[] = array(
-                'string'        => $tr['string'],
-                'translation'   => $tr['new'],
-                'name'          => $tr['name'] 
+                'string'          => $tr[ 'string' ],
+                'translation'     => $tr[ 'new' ],
+                'name'            => $tr[ 'name' ],
+                'gettext_context' => $tr[ 'gettext_context' ]
             );
         }        
         if(!empty($translations_add)){
@@ -25,9 +27,10 @@ if(isset($_POST['action']) && $_POST['action']=='icl_admo_add_translations' && w
         foreach($_POST['selected'] as $idx => $v){
             if(!empty($v)){
                 $translations_add[] = array(
-                    'string'        => base64_decode($_POST['strings'][$idx]),
-                    'translation'   => base64_decode($_POST['new_translations'][$idx]),
-                    'name'          => base64_decode($_POST['name'][$idx]) 
+                    'string'          => base64_decode( $_POST[ 'string' ][ $idx ] ),
+                    'translation'     => base64_decode( $_POST[ 'translation' ][ $idx ] ),
+                    'name'            => base64_decode( $_POST[ 'name' ] [ $idx ] ),
+                    'gettext_context' => base64_decode( $_POST[ 'gettext_context' ][ $idx ] ) 
                 );                
                 $translations_updated++;
             }
@@ -46,17 +49,25 @@ if(isset($_POST['action']) && $_POST['action']=='icl_admo_add_translations' && w
 }
 
 if(isset($active_languages[$language])){
-    $WPML_ST_MO_Downloader->load_xml();
-    $WPML_ST_MO_Downloader->get_translation_files();
-    $translations = $WPML_ST_MO_Downloader->get_translations($language);
-    
-    
+    try{
+        $WPML_ST_MO_Downloader->load_xml();
+        $WPML_ST_MO_Downloader->get_translation_files();
+        $version_projects = explode(';', $version);
+        $types = array();
+        foreach($version_projects as $project){
+            $exp = explode('|', $project);
+            $types[] = $exp[0];
+        }        
+        $translations = $WPML_ST_MO_Downloader->get_translations($language, array('types' => $types));
+        
+    }catch(Exception $error){
+        $user_errors[] =  $error->getMessage();
+    }
 }
 
 ?>
 
 <div class="wrap">
-    <div id="icon-wpml" class="icon32"><br /></div>
     <h2><?php _e('Auto-download WordPress translations', 'wpml-string-translation') ?></h2>    
     
     <?php if(!empty($translations_updated) || !empty($translations_add)):?>
@@ -65,7 +76,7 @@ if(isset($active_languages[$language])){
         <?php foreach($user_messages as $umessage): ?>
         <p><?php echo $umessage ?></p>
         <?php endforeach; ?>    
-        <a href="<?php echo admin_url('admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/theme-localization.php'); ?>" class="button-secondary"><?php _e('Check other languages') ?></a>
+        <a href="<?php echo admin_url('admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/theme-localization.php'); ?>" class="button-secondary"><?php _e('Check other languages', 'wpml-string-translation') ?></a>
         
     <?php elseif(!$version): ?>
         <div class="error">
@@ -107,8 +118,8 @@ if(isset($active_languages[$language])){
             <tr>
                 <th class="manage-column column-cb check-column" scope="col"><input type="checkbox" name="" value="" checked="checked" /></th>
                 <th><?php _e('String', 'wpml-string-translation') ?></th>
-                <th><?php _e('Existing translation', 'wpml-string-translation') ?></th>
-                <th><?php _e('New translation', 'wpml-string-translation') ?></th>
+                <th style="text-align:center;"><?php _e('Existing translation', 'wpml-string-translation') ?></th>
+                <th style="text-align:center;"><?php _e('New translation', 'wpml-string-translation') ?></th>
             </tr>
         </thead>
         
@@ -122,13 +133,13 @@ if(isset($active_languages[$language])){
                 </td>
                 <td>
                     <?php echo esc_html($translation['string']) ?>
-                    <input type="hidden" name="strings[<?php echo $idx ?>]" value="<?php echo base64_encode($translation['string']); ?>" />
-                    <input type="hidden" name="strings[<?php echo $idx ?>]" value="<?php echo base64_encode($translation['name']); ?>" />
+                    <input type="hidden" name="string[<?php echo $idx ?>]" value="<?php echo base64_encode($translation['string']); ?>" />
+                    <input type="hidden" name="name[<?php echo $idx ?>]" value="<?php echo base64_encode($translation['name']); ?>" />
+                    <input type="hidden" name="gettext_context[<?php echo $idx ?>]" value="<?php echo base64_encode($translation['gettext_context']); ?>" />
                 </td>
-                <td><?php echo esc_html($translation['translation']) ?>&nbsp;</td>
-                <td>
-                    <?php echo esc_html($translation['new']) ?>
-                    <input type="hidden" name="new_translations[<?php echo $idx ?>]" value="<?php echo base64_encode($translation['new']); ?>" />
+                <td colspan="2">
+                    <?php echo wp_text_diff($translation['translation'], $translation['new']); ?>
+                    <input type="hidden" name="translation[<?php echo $idx ?>]" value="<?php echo base64_encode($translation['new']); ?>" />
                 </td>
             </tr>      
             <?php $idx++; ?>  
@@ -140,8 +151,8 @@ if(isset($active_languages[$language])){
             <tr>
                 <th class="manage-column column-cb check-column" scope="col"><input type="checkbox" name="" value="" checked="checked" /></th>
                 <th><?php _e('String', 'wpml-string-translation') ?></th>
-                <th><?php _e('Existing translation', 'wpml-string-translation') ?></th>
-                <th><?php _e('New translation', 'wpml-string-translation') ?></th>
+                <th style="text-align:center;"><?php _e('Existing translation', 'wpml-string-translation') ?></th>
+                <th style="text-align:center;"><?php _e('New translation', 'wpml-string-translation') ?></th>
             </tr>
         </tfoot>        
         </table>
@@ -192,7 +203,7 @@ if(isset($active_languages[$language])){
     <?php else: ?>
     
         <p><?php _e('There is nothing to be updated or to be added.', 'wpml-string-translation') ?></p>
-        <p><a href="<?php echo admin_url('admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/theme-localization.php'); ?>" class="button-secondary"><?php _e('Check other languages') ?></a></p>
+        <p><a href="<?php echo admin_url('admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/theme-localization.php'); ?>" class="button-secondary"><?php _e('Check other languages', 'wpml-string-translation') ?></a></p>
     
     <?php endif; ?>
     
