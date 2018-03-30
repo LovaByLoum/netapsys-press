@@ -22,7 +22,6 @@ define( 'POST_TYPE_PAGE', 'page' );
 define( 'TAXONOMOMY_CATEGORY', 'category' );
 define( 'TAXONOMOMY_TAG', 'post_tag' );
 define( 'TAXONOMY_TYPE_ACTUS', 'type_actualite' );
-define( 'TAXONOMY_MOT_CLE_ACTUS', 'actus_tag' );
 
 //champs personnalisés (meta value) : syntaxe FIELD_{type de post}_{nom du champ}
 define ('FIELD_POST_POST_NOTE', 'post_note');

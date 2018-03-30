@@ -20,7 +20,7 @@ function mytheme_init_actus(){
 		'public'               => true,
 		'show_ui'              => true,
 		'show_in_nav_menus'    => true,
-		'menu_icon'            => get_template_directory_uri() . '/images/grey-icon/list_w__images.png',
+		'menu_icon'            => 'dashicons-welcome-widgets-menus',
 		'menu_position'        => 6,
 		'labels'               => $labels,
 		'query_var'            => true,

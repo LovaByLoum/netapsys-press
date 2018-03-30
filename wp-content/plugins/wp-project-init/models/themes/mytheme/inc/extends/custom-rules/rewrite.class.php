@@ -99,9 +99,9 @@ class CRewrite {
 
 // Instantiate class.
 $oRewrite = new CRewrite();
-add_filter('post_type_link', array(&$oRewrite,'post_type_link'),10,3);
-add_filter('post_link', array(&$oRewrite,'post_type_link'),10,3);
-add_filter('term_link', array(&$oRewrite,'term_link'),10,3);
+//add_filter('post_type_link', array(&$oRewrite,'post_type_link'),10,3);
+//add_filter('post_link', array(&$oRewrite,'post_type_link'),10,3);
+//add_filter('term_link', array(&$oRewrite,'term_link'),10,3);
 add_action( 'init', array(&$oRewrite, 'flush_rewrite_rules') );
 add_action( 'generate_rewrite_rules', array(&$oRewrite, 'create_custom_rewrite_rules') );
 add_filter( 'query_vars', array(&$oRewrite, 'add_custom_page_variables') );

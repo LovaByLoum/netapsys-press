@@ -83,7 +83,7 @@ function mytheme_mce_buttons_2( $buttons ) {
 }
 
 //charger les images en lazy load
-add_action( 'wp_enqueue_scripts', 'mytheme_default_scripts' );
+//add_action( 'wp_enqueue_scripts', 'mytheme_default_scripts' );
 function mytheme_default_scripts(){
   //remplacer jquery par une version recente
   if(!is_admin()){
@@ -95,7 +95,7 @@ function mytheme_default_scripts(){
   wp_enqueue_script('jquery-lazyload', get_template_directory_uri() .'/js/library/jquery.lazyload.min.js', array('jquery'), '1.8.0' , true);
 }
 
-add_filter( 'the_content','mytheme_default_the_content',9);
+//add_filter( 'the_content','mytheme_default_the_content',9);
 function mytheme_default_the_content($html){
   //charger en lazy load les images wp-image
   $html = preg_replace_callback(
