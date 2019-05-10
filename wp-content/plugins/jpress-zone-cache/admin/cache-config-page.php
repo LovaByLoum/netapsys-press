@@ -2,6 +2,7 @@
 /**
  * page d'administration
  */
+    global $jpress_zone_cache;
 	@session_start();
 
 	if (isset($_POST["filtre_limit"])){
@@ -23,7 +24,7 @@
 	
 	//add
 	if (isset($_POST["add-cache"])){
-		jzc_set_cache(
+        jPressZoneCacheService::set_cache_config(
 			$_POST['cache-name'],
 			intval($_POST['cache-role']),
 			intval($_POST['cache-langue']),
@@ -33,16 +34,16 @@
 	
 	//delete
 	if (isset($_POST["delete-cache"]) && !empty($_POST['cache-ids'])){
-		jzc_delete_cache($_POST['cache-ids']);
+        jPressZoneCacheService::delete_cache_config($_POST['cache-ids']);
 	}
 	
 	if (isset($_POST["delete-caches"]) && !empty($_POST['cache-ids'])){
-		jzc_delete_caches($_POST['cache-ids']);
+        jPressZoneCacheService::delete_caches($_POST['cache-ids']);
 	}
 	
 	//generate
-	if (isset($_POST["generate-cache"]) && !empty($_POST['cache-ids'])){ 
-		jzc_generate_caches($_POST['cache-ids']);
+	if (isset($_POST["generate-cache"]) && !empty($_POST['cache-ids'])){
+        jPressZoneCacheService::generate_caches($_POST['cache-ids']);
 	}
 
 ?>
@@ -83,10 +84,8 @@
 							<div class="form-field">
 								<label for="cache-file">Fichier de cache</label>
 								<?php
-								global $jzc_dir_caches;
-								//$dirname = WP_PLUGIN_DIR . '/jpress-zone-cache/zone_file/';
-								$dirname = $jzc_dir_caches;
-								$dir = opendir($dirname); 
+								$dirname = $jpress_zone_cache->dir_caches;
+								$dir = opendir($dirname);
 								$fileoption = "";
 								while($file = readdir($dir)) {
 									if($file != '.' && $file != '..' && !is_dir($dirname.$file))
@@ -112,7 +111,7 @@
 					<form method="post" action="" id="posts-filter">
 						<?php 
 						$offset = $limit*($paged -1) ;
-						$list = jzc_get_list_caches($offset,$limit);
+						$list = jPressZoneCacheService::get_list_caches($offset,$limit);
 						?>
 						<div class="tablenav top">
 							<div class="alignleft actions">
@@ -168,7 +167,7 @@
 							$nonextpage = ($nextpage>$nbrpage)?true:false;
 							if (!empty($list["data"])):
 								foreach ($list["data"] as $line):
-									$cache = jzc_get_cache_by('id',$line->cache_id);
+									$cache = jPressZoneCacheService::get_cache_by('id',$line->cache_id);
 								?>
 									<tr valign="top">
 											<td><input type="checkbox" name="cache-ids[]" value="<?php echo $line->id; ?>"></td>
@@ -218,7 +217,7 @@
 							</tfoot>
 							<tbody>
 							<?php 
-							$list = jzc_get_list_cache();
+							$list = jPressZoneCacheService::get_list_cache_config();
 							if (!empty($list["data"])):
 								foreach ($list["data"] as $line):?>
 									<tr valign="top">
