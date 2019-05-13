@@ -3,6 +3,7 @@
   Plugin Name: jpress-zone-cache
   Description: Permet de mettre en cache des zones de la page et d'avoir differentes instances de cache de la même zone en spécifiant des paramêtres comme le rôle de l'utilisateur, langue, device etc ...
   Author: Johary Ranarimanana
+  Text Domain: jzc
 */
 
 define ( 'JZC_URL', plugins_url('jpress-zone-cache') );
@@ -17,7 +18,7 @@ $jpress_zone_cache = new jPressZoneCache();
 //API for theme
 function jzc_get_cache($cache_slug, $role = NULL, $lang = NULL){
     global $jpress_zone_cache;
-    $html = jPressZoneCacheService::get_cache($cache_slug, $role = NULL, $lang = NULL);
+    $html = jPressZoneCacheService::get_cache($cache_slug, $role, $lang );
     if( $html ){
         return $html;
     } else {

@@ -21,12 +21,23 @@ class jPressZoneCache{
         add_action('admin_menu', array($this, 'admin_menu'), 999);
         add_action('admin_init', array($this, 'admin_init'));
 
+        //preload event
+        $jzc_preload_event = get_option('jzc-preload-event', array());
+        //save post
+        if ( in_array('save_post', $jzc_preload_event) ){
+            add_action('save_post', array($this, 'schedule_preload_cache'));
+        }
+        //edit_term post
+        if ( in_array('edit_term', $jzc_preload_event) ){
+            add_action('edit_term', array($this, 'schedule_preload_cache'));
+        }
+
         //cron
         add_filter('cron_schedules', array($this,'add_scheduled_interval'));
-        if (!wp_next_scheduled('jzc_cron_purge')) {
-            wp_schedule_event(time(), '3h', 'jzc_cron_purge');
+        if (!wp_next_scheduled('jzc_cron_preload')) {
+            wp_schedule_event(time(), '5min', 'jzc_cron_preload');
         }
-        add_action('jzc_cron_purge', array($this,'purge'));
+        add_action('jzc_cron_preload', array($this,'preload_cache'));
     }
 
     function admin_menu() {
@@ -68,6 +79,7 @@ class jPressZoneCache{
                         role int(1) default NULL,
                         langue int(1) default NULL,
                         zone_file varchar(255) default NULL,
+                        preload  int(1) default NULL,
                         PRIMARY KEY  (`id`)
                     ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
             $wpdb->query($sql);
@@ -80,20 +92,32 @@ class jPressZoneCache{
                         html longtext default NULL,
                         role varchar(100) default NULL,
                         langue varchar(50) default NULL,
+                        date datetime DEFAULT NULL,
                         PRIMARY KEY  (`id`),
-                        KEY `cache_id` (`cache_id`)
-                    ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
+                        KEY `cache_id` (`cache_id`),
+                        UNIQUE KEY `constraint_update` (`cache_id`,`role`,`langue`)
+                    ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";
             $wpdb->query($sql);
         }
     }
 
+    function preload_cache(){
+        $preload = get_option('jzc_preload_all', false);
+        if ( $preload == true ){
+            jPressZoneCacheService::flush_and_preload_cache();
+            delete_option('jzc_preload_all');
+        }
+    }
+
+    function schedule_preload_cache(){
+        $preload = get_option('jzc_preload_all', false);
+        if ( $preload == false ){
+            update_option('jzc_preload_all', true);
+        }
+    }
+
     function add_scheduled_interval($schedules) {
-        $schedules['3h'] = array('interval'=>10800, 'display'=>'Once 3 hours');
+        $schedules['5min'] = array('interval'=>5*60, 'display'=>'Once every 5 minutes');
         return $schedules;
     }
-
-    function purge(){
-
-    }
-
 }
